@@ -14,6 +14,7 @@ const App: React.FC = () => {
 
   const [hoveredTile, setHoveredTile] = useState<number | null>(null);
   const [selectedTiles, setSelectedTiles] = useState<number[]>([]);
+  const [dragged, setDragged] = useState<boolean>(false);
 
   const generateRandomTileNumbers = () => {
     const numbers = Array.from({ length: 9 }, (_, i) => i + 1);
@@ -26,12 +27,13 @@ const App: React.FC = () => {
 
   const handleTileDrop = (tileNumber: number) => {
     generateRandomTileNumbers();
-      setSelectedTiles((prev) => [...prev, tileNumber]);
-      if (tileNumber === 9) {
-        setMessage('You win!');
-      } else {
-        setMessage('You lose!');
-      }
+    setSelectedTiles((prev) => [...prev, tileNumber]);
+    setDragged(false);
+    if (tileNumber === 9) {
+      setMessage('You win!');
+    } else {
+      setMessage('You lose!');
+    }
   };
 
   const handleMonthChange = (month: string) => {
@@ -44,46 +46,49 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-8">
-      <h1 className="text-2xl font-bold mb-4">Game Title</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-8 h-screen">
+      <h1 className="text-2xl font-bold mb-4">Mi'kmaq App</h1>
 
-      {/* Dropdown Menu */}
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger className="bg-blue-500 text-white px-4 py-2 rounded">
-          {selectedMonth}
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content className="bg-white border border-gray-200 rounded shadow-md">
-          {months.map((month) => (
-            <DropdownMenu.Item
-              key={month}
-              className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
-              onClick={() => handleMonthChange(month)}
-            >
-              {month}
-            </DropdownMenu.Item>
-          ))}
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
-
-       {/* Display "Win" or "Lose" Message */}
-       {message && (
-        <div className="mt-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded text-2xl font-bold">
+      {/* Display "Win" or "Lose" Message */}
+      {message && (
+        <div className="mt-4 mb-4 p-4 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded text-2xl font-bold">
           {message}
         </div>
       )}
 
+      <div className="flex justify-center gap-48 w-full items-end ">
+
+        {/* Dropdown Menu */}
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger className="bg-blue-500 text-white px-4 py-2 h-10 w-28 rounded">
+            {selectedMonth}
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content className="bg-white border border-gray-200 rounded shadow-md">
+            {months.map((month) => (
+              <DropdownMenu.Item
+                key={month}
+                className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
+                onClick={() => handleMonthChange(month)}
+              >
+                {month}
+              </DropdownMenu.Item>
+            ))}
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
+
+        <img src="/heart.png" alt="Drag Me" className="w-24 h-24" />
+      </div>
 
       {/* 3x3 Grid Layout */}
       <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-6">
         {tileNumbers.map((number, index) => (
           <div
             key={index}
-            className={`flex items-center justify-center border-2 border-gray-300 h-24 w-24 bg-white text-xl cursor-pointer ${
-              hoveredTile === number ? 'bg-gray-300' : ''
-            }`}
+            className={`flex items-center justify-center border-2 border-gray-300 h-36 w-36 text-xl ${dragged && hoveredTile === number ? 'bg-gray-400' : 'bg-white'  // Apply grey background when hovered
+              }`}
             onDragOver={(e) => {
               e.preventDefault();
-              setHoveredTile(number);
+              if (dragged) setHoveredTile(number);
             }}
             onDragLeave={() => setHoveredTile(null)}
             onDrop={() => {
@@ -96,14 +101,14 @@ const App: React.FC = () => {
         ))}
       </div>
 
-     
       {/* Flex Container for Image and Dictionary Button */}
       <div className="flex mt-6 justify-center w-full">
         {/* Draggable PNG Image */}
         <div
           className="w-24 h-24"
           draggable
-          onDragStart={(e) => e.dataTransfer.setData('text/plain', 'dragged')}
+          onDragStart={() => setDragged(true)}  // Track drag start
+          onDragEnd={() => setDragged(false)}   // Reset drag state after drop
         >
           <img src="/bear_paw.jpeg" alt="Drag Me" className="w-full h-full" />
         </div>
