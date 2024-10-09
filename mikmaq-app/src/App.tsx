@@ -76,7 +76,7 @@ const App: React.FC = () => {
           </DropdownMenu.Content>
         </DropdownMenu.Root>
 
-        <img src="/heart.png" alt="Drag Me" className="w-24 h-24" />
+        <img src="/heart.png" alt="Drag Me" draggable="false" className="w-24 h-24" />
       </div>
 
       {/* 3x3 Grid Layout */}
