@@ -45,6 +45,17 @@ const App: React.FC = () => {
     generateRandomTileNumbers();
   }, []);
 
+  function getImage(imageNum: number) {
+    switch (imageNum) {
+      case 9:
+        return "/logo192.png"
+        break;
+      default:
+        return "/heart.png";
+    }
+      
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 p-8 h-screen">
       <h1 className="text-2xl font-bold mb-4">Mi'kmaq App</h1>
@@ -83,6 +94,9 @@ const App: React.FC = () => {
       <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-6">
         {tileNumbers.map((number, index) => (
           <div
+            //background-image = url("./heart.png");
+            //style={{backgroundImage: `url("./heart.png"), "height" : "5px"`}}
+
             key={index}
             className={`flex items-center justify-center border-2 border-gray-300 h-36 w-36 text-xl ${dragged && hoveredTile === number ? 'bg-gray-400' : 'bg-white'  // Apply grey background when hovered
               }`}
@@ -96,7 +110,8 @@ const App: React.FC = () => {
               setHoveredTile(null);
             }}
           >
-            {number}
+            <img src={getImage(number)} draggable="false"/>
+            {/*number*/}
           </div>
         ))}
       </div>
