@@ -13,6 +13,31 @@ const wordsByMonth: Record<string, string[]> = {
   March: ['Apple', 'Banana', 'Cherry', 'Plum', 'Kiwi', 'Mango', 'Grape', 'Orange', 'Lemon', 'Peach', 'Pear', 'Pineapple', 'Watermelon', 'Cantaloupe', 'Honeydew', 'Avocado', 'Persimmon', 'Raspberry', 'Blackberry', 'Blueberry', 'Strawberry'],
 };
 
+// Mapping words to image file paths
+const wordToImageMap: Record<string, string> = {
+  Apple: '/and_aqq.png',
+  Banana: '/Dad_ta\'ta.png',
+  Cherry: '/eat_mijisi.png',
+  Plum: '/Grandmother_kiju\'.png',
+  Kiwi: '/him_or_her_nekm.png',
+  Mango: '/I_am_coming_from_wejiey.png',
+  Grape: '/I_am_going_eliey.png',
+  Orange: '/I_am_happy_welta\'si.png',
+  Lemon: '/I_have_it_ala\'tu.png',
+  Peach: '/I_like_kesatm.png',
+  Pear: '/I_like_the_taste_of_it_wiktm.png',
+  Pineapple: '/I_love_kesalk.png',
+  Watermelon: '/I_love_you_kesalul.png',
+  Cantaloupe: '/I_ni\'n.png',
+  Honeydew: '/I_see_it_nemitu.png',
+  Avocado: '/Look_at_this_ula.png',
+  Persimmon: '/make_it_l\'tu.png',
+  Raspberry: '/my_name_is_teluisi.png',
+  Blackberry: '/you_ki\'l.png',
+  Blueberry: '/you_ki\'l.png', // Assuming you_ki'l is used for both Blackberry and Blueberry
+  Strawberry: '/you_ki\'l.png',
+};
+
 const App: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>('September'); // State for selected month
   const [message, setMessage] = useState<string | null>(null);
@@ -93,23 +118,19 @@ const App: React.FC = () => {
   }, [selectedMonth, usedWords]); // Run effect when selectedMonth or usedWords changes
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+    <div style={{ backgroundImage: 'url("/App_Background.jpg")' }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
       <h1 className="text-2xl font-bold mb-1">Mi'kmaq App</h1>
 
-      {/* Display "Win" or "Lose" Message */}
-      {message && (
-        <div className="mt-1 mb-1 p-4 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded text-2xl font-bold">
-          {message}
-        </div>
-      )}
+      <div className='flex gap-10'>
 
-      {/* Display Game Ended Message */}
-      {gameEnded && (
-        <div className="mt-4 mb-4 p-4 bg-red-100 border border-red-400 text-red-800 rounded text-2xl font-bold">
-          Game ended
-        </div>
-      )}
+        {/* Display "Win" or "Lose" Message */}
+        {message && (
+          <div className="mt-1 mb-1 p-4 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded text-2xl font-bold">
+            {message}
+          </div>
+        )}
 
+      </div>
 
 
       <div className="flex justify-between w-3/5 items-end">
@@ -157,10 +178,10 @@ const App: React.FC = () => {
             onDragLeave={() => setHoveredTile(null)}
             onDrop={() => {
               handleTileDrop(word);
-              setHoveredTile(null); // Reset hovered tile on drop
+              setHoveredTile(null);
             }}
           >
-            {word}
+            <img src={wordToImageMap[word]} alt={word} className="w-full h-full object-cover" />
           </div>
         ))}
       </div>
@@ -174,7 +195,7 @@ const App: React.FC = () => {
           onDragStart={() => setDragged(true)}  // Track drag start
           onDragEnd={() => setDragged(false)}   // Reset drag state after drop
         >
-          <img src="/bear_paw.jpeg" alt="Drag Me" className="w-full h-full" />
+          <img src="/bear_paw.PNG" alt="Drag Me" className="w-full h-full" />
         </div>
 
         {/* Dictionary Button with Pop-up */}
