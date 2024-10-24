@@ -62,6 +62,7 @@ const App: React.FC = () => {
       selectedWords[Math.floor(Math.random() * 9)] = winningWord; // Replace a random tile with the winning word
     }
 
+    console.log(selectedWords);
     // Set the grid with the selected words
     setGridWords(selectedWords); // No need to add empty tiles, always 9 words now
   };
@@ -111,8 +112,12 @@ const App: React.FC = () => {
 
   useEffect(() => {
     selectWinningWord(); // Set new winning word based on updated month
-    generateRandomGridWords(); // Generate new grid words based on updated month
   }, [selectedMonth, usedWords]); // Run effect when selectedMonth or usedWords changes
+
+  useEffect(() => {
+    // After the winning word is selected, generate random grid words
+    generateRandomGridWords();
+  }, [winningWord]);
 
   return (
     <div style={{ backgroundImage: 'url("/App_Background.jpg")' }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
