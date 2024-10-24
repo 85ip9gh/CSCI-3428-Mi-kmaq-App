@@ -52,7 +52,7 @@ const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap })
           <Dialog.Content
             className="flex flex-col items-center justify-center fixed bg-white p-6 rounded-lg shadow-lg top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 bg-gray-100 border-2 border-gray-300"
           >
-            <Dialog.Title className="text-xl font-bold">{selectedWord}</Dialog.Title>
+            <Dialog.Title className="text-3xl font-bold mb-6">{selectedWord}</Dialog.Title>
 
             <img src={selectedImage} className="w-48 h-48 object-cover" />
 

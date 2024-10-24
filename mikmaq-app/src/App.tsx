@@ -38,7 +38,7 @@ const wordToImageMap: Record<string, string> = {
 
 const App: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>('September'); // State for selected month
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<string>('Drag the bear paw to the correct image!'); // State for message
   const [gridWords, setGridWords] = useState<string[]>([]); // State for grid words
   const [winningWord, setWinningWord] = useState<string>(''); // State for the winning word
   const [usedWords, setUsedWords] = useState<string[]>([]); // State for used words
@@ -92,7 +92,7 @@ const App: React.FC = () => {
 
     if (usedWords.length == wordsByMonth[selectedMonth].length - 1) {
       setGameEnded(true);
-      setMessage("Game ended");
+      setMessage("Game ended. Select a new month to play again.");
       return;
     }
 
@@ -106,7 +106,7 @@ const App: React.FC = () => {
     setUsedWords([]); // Reset used words for the new month
     setRound(0); // Reset round count for the new month
     setGameEnded(false); // Reset game ended state
-    setMessage(null); // Clear previous messages
+    setMessage('Drag the bear paw to the correct image!'); // Clear previous messages
   };
 
   useEffect(() => {
@@ -116,92 +116,120 @@ const App: React.FC = () => {
 
   return (
     <div style={{ backgroundImage: 'url("/App_Background.jpg")' }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
-      <h1 className="text-2xl font-bold mb-1">Mi'kmaq App</h1>
-
+      <div className='text-8xl font-bold mb-10'>Mi'kmaq Pictionary</div>
       <div className='flex gap-10'>
 
         {/* Display "Win" or "Lose" Message */}
         {message && (
-          <div className="mt-1 mb-1 p-4 bg-yellow-100 border border-yellow-400 text-yellow-800 rounded text-2xl font-bold">
+          <div className="mt-1 mb-1 p-4 bg-yellow-100 border-8 border-yellow-400 text-yellow-800 rounded-lg text-2xl font-bold">
             {message}
           </div>
         )}
 
       </div>
 
-
-      <div className="flex justify-between w-3/5 items-end">
-        {/* Dropdown Menu */}
-        <DropdownMenu.Root>
-          <DropdownMenu.Trigger className="bg-blue-500 text-white px-4 py-2 h-10 w-28 rounded">
-            {selectedMonth}
-          </DropdownMenu.Trigger>
-          <DropdownMenu.Content className="bg-white border border-gray-200 rounded shadow-md">
-            {months.map((month) => (
-              <DropdownMenu.Item
-                key={month}
-                className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
-                onClick={() => handleMonthChange(month)}
-              >
-                {month}
-              </DropdownMenu.Item>
-            ))}
-          </DropdownMenu.Content>
-        </DropdownMenu.Root>
-
+      <div className='flex items-center justify-start gap-10 min-w-96' >
+        <img src="/Audio_Button.png" alt="Drag Me" className="w-24 h-24" />
         {/* Display the Winning Word */}
         <div>
           {winningWord && (
             <h2 className="text-5xl font-bold mb-1">{winningWord}</h2>
           )}
         </div>
-
-        <img src="/heart.png" alt="Drag Me" className="w-24 h-24" />
       </div>
 
+      <div className='flex justify-between items-end'>
 
 
-
-      <div className={`${gameEnded ? ' pointer-events-none opacity-50' : ''}`}>
-        {/* 3x3 Grid Layout */}
-        <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-6 w-480">
-          {gridWords.map((word, index) => (
-            <div
-              key={index}
-              className={`flex items-center justify-center border-2 border-gray-300 h-36 w-36 text-xl ${dragged && hoveredTile === index ? 'bg-gray-400' : 'bg-white'}`}
-              onDragOver={(e) => {
-                e.preventDefault();
-                if (dragged) setHoveredTile(index);
-              }}
-              onDragLeave={() => setHoveredTile(null)}
-              onDrop={() => {
-                handleTileDrop(word);
-                setHoveredTile(null);
-              }}
+        <div className='flex flex-col justify-between items-center h-full mr-6'>
+          {/* Dropdown Menu */}
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger
+              className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center justify-between w-44"
             >
-              <img src={wordToImageMap[word]} alt={word} className="w-full h-full object-cover" />
-            </div>
-          ))}
-        </div>
+              <div>{selectedMonth}</div>
+              {/* Dropdown arrow */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="w-6 h-6 ml-2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content
+              className="bg-white border border-gray-200 rounded-lg shadow-md w-44"
+            >
+              {months.map((month) => (
+                <DropdownMenu.Item
+                  key={month}
+                  className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-xl"
+                  onClick={() => handleMonthChange(month)}
+                >
+                  {month}
+                </DropdownMenu.Item>
+              ))}
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
 
-        {/* Flex Container for Image and Dictionary Button */}
-        <div className="flex mt-6 justify-center w-full">
+
+
+
           {/* Draggable PNG Image */}
           <div
-            className="w-24 h-24"
+            className="w-36 h-36"
             draggable
             onDragStart={() => setDragged(true)}  // Track drag start
             onDragEnd={() => setDragged(false)}   // Reset drag state after drop
           >
-            <img src="/bear_paw.PNG" alt="Drag Me" className="w-full h-full" />
+            <img src="/bear_paw.PNG" alt="Drag Me" className="w-full h-full translate-y-4 cursor-pointer" />
           </div>
+        </div>
+
+
+
+        <div className={`${gameEnded ? ' pointer-events-none opacity-50' : ''}`}>
+          {/* 3x3 Grid Layout */}
+          <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-6 w-480">
+            {gridWords.map((word, index) => (
+              <div
+                key={index}
+                className={`flex items-center justify-center border-8 border-black h-36 w-36 text-xl ${dragged && hoveredTile === index ? 'bg-gray-400' : 'bg-white'}`}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  if (dragged) setHoveredTile(index);
+                }}
+                onDragLeave={() => setHoveredTile(null)}
+                onDrop={() => {
+                  handleTileDrop(word);
+                  setHoveredTile(null);
+                }}
+              >
+                <img src={wordToImageMap[word]} alt={word} className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </div>
+
+        </div>
+        <div className='flex flex-col justify-between items-center h-full ml-6'>
+          <img src="/heart.png" alt="Drag Me" className="w-36 h-36" />
 
           {/* Dictionary Button with Pop-up */}
           <Dialog.Root>
             <Dialog.Trigger asChild>
-              <button className="bg-green-500 text-white px-2 py-2 rounded ml-4">
-                Open Dictionary
-              </button>
+              <div className='flex flex-col justify-center items-center translate-y-8 cursor-pointer'>
+                <img src="/Dictionary.png" alt="Dictionary" className="w-36 h-36" />
+                <button className="bg-transparent text-black px-2 py-2 rounded-lg ml-4 text-3xl font-bold">
+                  Dictionary
+                </button>
+              </div>
             </Dialog.Trigger>
             <Dialog.Portal>
               <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
