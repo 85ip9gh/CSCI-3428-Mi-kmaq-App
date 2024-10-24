@@ -4,45 +4,43 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import Dictionary from './Dictionary';
 
 const wordsByMonth: Record<string, string[]> = {
-  September: ['Apple', 'Banana', 'Cherry'],
-  October: ['Apple', 'Banana', 'Cherry', 'Plum', 'Kiwi', 'Mango'],
-  November: ['Apple', 'Banana', 'Cherry', 'Plum', 'Kiwi', 'Mango', 'Grape', 'Orange', 'Lemon'],
-  December: ['Apple', 'Banana', 'Cherry', 'Plum', 'Kiwi', 'Mango', 'Grape', 'Orange', 'Lemon', 'Peach', 'Pear', 'Pineapple'],
-  January: ['Apple', 'Banana', 'Cherry', 'Plum', 'Kiwi', 'Mango', 'Grape', 'Orange', 'Lemon', 'Peach', 'Pear', 'Pineapple', 'Watermelon', 'Cantaloupe', 'Honeydew'],
-  February: ['Apple', 'Banana', 'Cherry', 'Plum', 'Kiwi', 'Mango', 'Grape', 'Orange', 'Lemon', 'Peach', 'Pear', 'Pineapple', 'Watermelon', 'Cantaloupe', 'Honeydew', 'Avocado', 'Persimmon', 'Raspberry'],
-  March: ['Apple', 'Banana', 'Cherry', 'Plum', 'Kiwi', 'Mango', 'Grape', 'Orange', 'Lemon', 'Peach', 'Pear', 'Pineapple', 'Watermelon', 'Cantaloupe', 'Honeydew', 'Avocado', 'Persimmon', 'Raspberry', 'Blackberry', 'Blueberry', 'Strawberry'],
+  September: ['I', 'you', 'My name is...'],
+  October: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it'],
+  November: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going'],
+  December: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going', 'I see it.', 'I like...', 'I am coming from...'],
+  January: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going', 'I see it.', 'I like...', 'I am coming from...', 'Dad', 'Grandmother or Mother', 'him or her'],
+  February: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going', 'I see it.', 'I like...', 'I am coming from...', 'Dad', 'Grandmother or Mother', 'him or her', 'I have it', 'Look at this', 'I love you'],
+  March: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going', 'I see it', 'I like...', 'I am coming from...', 'Dad', 'Grandmother or Mother', 'him or her', 'I have it', 'Look at this', 'I love you', 'I am happy'],
 };
 
 // Mapping words to image file paths
 const wordToImageMap: Record<string, string> = {
-  Apple: '/and_aqq.png',
-  Banana: '/Dad_ta\'ta.png',
-  Cherry: '/eat_mijisi.png',
-  Plum: '/Grandmother_kiju\'.png',
-  Kiwi: '/him_or_her_nekm.png',
-  Mango: '/I_am_coming_from_wejiey.png',
-  Grape: '/I_am_going_eliey.png',
-  Orange: '/I_am_happy_welta\'si.png',
-  Lemon: '/I_have_it_ala\'tu.png',
-  Peach: '/I_like_kesatm.png',
-  Pear: '/I_like_the_taste_of_it_wiktm.png',
-  Pineapple: '/I_love_kesalk.png',
-  Watermelon: '/I_love_you_kesalul.png',
-  Cantaloupe: '/I_ni\'n.png',
-  Honeydew: '/I_see_it_nemitu.png',
-  Avocado: '/Look_at_this_ula.png',
-  Persimmon: '/make_it_l\'tu.png',
-  Raspberry: '/my_name_is_teluisi.png',
-  Blackberry: '/you_ki\'l.png',
-  Blueberry: '/you_ki\'l.png', // Assuming you_ki'l is used for both Blackberry and Blueberry
-  Strawberry: '/you_ki\'l.png',
+  'and': '/and_aqq.png',
+  'Dad': '/Dad_ta\'ta.png',
+  'eat': '/eat_mijisi.png',
+  'Grandmother or Mother': '/Grandmother_kiju\'.png',
+  'him or her': '/him_or_her_nekm.png',
+  'I am coming from...': '/I_am_coming_from_wejiey.png',
+  'I am going': '/I_am_going_eliey.png',
+  'I am happy': '/I_am_happy_welta\'si.png',
+  'I have it': '/I_have_it_ala\'tu.png',
+  'I like...': '/I_like_kesatm.png',
+  'I like the taste of it': '/I_like_the_taste_of_it_wiktm.png',
+  'I love...': '/I_love_kesalk.png',
+  'I love you': '/I_love_you_kesalul.png',
+  'I': '/I_ni\'n.png',
+  'I see it': '/I_see_it_nemitu.png',
+  'Look at this': '/Look_at_this_ula.png',
+  'Make it': '/make_it_l\'tu.png',
+  'My name is...': '/my_name_is_teluisi.png',
+  'you': '/you_ki\'l.png',
 };
 
 const App: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>('September'); // State for selected month
   const [message, setMessage] = useState<string | null>(null);
   const [gridWords, setGridWords] = useState<string[]>([]); // State for grid words
-  const [winningWord, setWinningWord] = useState<string | null>(null); // State for the winning word
+  const [winningWord, setWinningWord] = useState<string>(''); // State for the winning word
   const [usedWords, setUsedWords] = useState<string[]>([]); // State for used words
   const months = Object.keys(wordsByMonth); // Extract month keys
   const [round, setRound] = useState<number>(0); // Track current round
@@ -52,26 +50,22 @@ const App: React.FC = () => {
 
   // Function to generate random grid words
   const generateRandomGridWords = () => {
-    // Get the available words for the selected month
-    const words = wordsByMonth[selectedMonth].filter(word => !usedWords.includes(word));
+    // Get the available words for the selected month (you used 'March' for testing)
+    const words = wordsByMonth['March'];
 
-    if (words.length === 0) {
-      setGameEnded(true); // Set game ended if no words left
-      setMessage("Game ended");
-      return;
-    }
-
+    // Shuffle the words and select up to 9 unique words
     const shuffledWords = [...words].sort(() => Math.random() - 0.5);
-    const selectedWords = shuffledWords.slice(0, 8); // Select up to 8 words for the grid
+    const selectedWords = shuffledWords.slice(0, 9); // Select 9 unique words for the grid
 
     // Ensure the winning word is included in the grid
     if (winningWord && !selectedWords.includes(winningWord)) {
-      selectedWords[Math.floor(Math.random() * 8)] = winningWord; // Replace a random tile with the winning word
+      selectedWords[Math.floor(Math.random() * 9)] = winningWord; // Replace a random tile with the winning word
     }
 
-    // Fill the grid with the selected words and add empty tiles if necessary
-    setGridWords([...selectedWords, ...Array(9 - selectedWords.length).fill('')]); // Ensure 9 tiles total
+    // Set the grid with the selected words
+    setGridWords(selectedWords); // No need to add empty tiles, always 9 words now
   };
+
 
   // Function to select a random winning word
   const selectWinningWord = () => {
@@ -94,9 +88,12 @@ const App: React.FC = () => {
       setMessage(`kjinu’kwalsi ap!`);
     }
 
-    // Mark the winning word as used
-    if (winningWord) {
-      setUsedWords(prev => [...prev, winningWord]); // Add the winning word to the used list
+    setUsedWords(prev => [...prev, winningWord]);
+
+    if (usedWords.length == wordsByMonth[selectedMonth].length - 1) {
+      setGameEnded(true);
+      setMessage("Game ended");
+      return;
     }
 
     // Prepare for the next round
@@ -165,61 +162,60 @@ const App: React.FC = () => {
 
 
 
-      {/* 3x3 Grid Layout */}
-      <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-6 w-480">
-        {gridWords.map((word, index) => (
-          <div
-            key={index}
-            className={`flex items-center justify-center border-2 border-gray-300 h-36 w-36 text-xl ${dragged && hoveredTile === index ? 'bg-gray-400' : 'bg-white'}`}
-            onDragOver={(e) => {
-              e.preventDefault();
-              if (dragged) setHoveredTile(index);
-            }}
-            onDragLeave={() => setHoveredTile(null)}
-            onDrop={() => {
-              handleTileDrop(word);
-              setHoveredTile(null);
-            }}
-          >
-            <img src={wordToImageMap[word]} alt={word} className="w-full h-full object-cover" />
-          </div>
-        ))}
-      </div>
-
-      {/* Flex Container for Image and Dictionary Button */}
-      <div className="flex mt-6 justify-center w-full">
-        {/* Draggable PNG Image */}
-        <div
-          className="w-24 h-24"
-          draggable
-          onDragStart={() => setDragged(true)}  // Track drag start
-          onDragEnd={() => setDragged(false)}   // Reset drag state after drop
-        >
-          <img src="/bear_paw.PNG" alt="Drag Me" className="w-full h-full" />
+      <div className={`${gameEnded ? ' pointer-events-none opacity-50' : ''}`}>
+        {/* 3x3 Grid Layout */}
+        <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-6 w-480">
+          {gridWords.map((word, index) => (
+            <div
+              key={index}
+              className={`flex items-center justify-center border-2 border-gray-300 h-36 w-36 text-xl ${dragged && hoveredTile === index ? 'bg-gray-400' : 'bg-white'}`}
+              onDragOver={(e) => {
+                e.preventDefault();
+                if (dragged) setHoveredTile(index);
+              }}
+              onDragLeave={() => setHoveredTile(null)}
+              onDrop={() => {
+                handleTileDrop(word);
+                setHoveredTile(null);
+              }}
+            >
+              <img src={wordToImageMap[word]} alt={word} className="w-full h-full object-cover" />
+            </div>
+          ))}
         </div>
 
-        {/* Dictionary Button with Pop-up */}
-        <Dialog.Root>
-          <Dialog.Trigger asChild>
-            <button className="bg-green-500 text-white px-2 py-2 rounded ml-4">
-              Open Dictionary
-            </button>
-          </Dialog.Trigger>
-          <Dialog.Portal>
-            <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
-            <Dialog.Content className="fixed inset-0 flex items-center justify-center">
-              <div className="bg-white p-8 rounded-lg">
-                <Dialog.Title className="text-2xl font-bold mb-4">Mi'kmaq Dictionary</Dialog.Title>
-                <Dictionary wordsByMonth={wordsByMonth} selectedMonth={selectedMonth} />
-                <Dialog.Close className="absolute top-2 right-2">
-                  <button className="bg-red-500 text-white px-2 py-1 rounded">Close</button>
-                </Dialog.Close>
-              </div>
-            </Dialog.Content>
-          </Dialog.Portal>
-        </Dialog.Root>
+        {/* Flex Container for Image and Dictionary Button */}
+        <div className="flex mt-6 justify-center w-full">
+          {/* Draggable PNG Image */}
+          <div
+            className="w-24 h-24"
+            draggable
+            onDragStart={() => setDragged(true)}  // Track drag start
+            onDragEnd={() => setDragged(false)}   // Reset drag state after drop
+          >
+            <img src="/bear_paw.PNG" alt="Drag Me" className="w-full h-full" />
+          </div>
+
+          {/* Dictionary Button with Pop-up */}
+          <Dialog.Root>
+            <Dialog.Trigger asChild>
+              <button className="bg-green-500 text-white px-2 py-2 rounded ml-4">
+                Open Dictionary
+              </button>
+            </Dialog.Trigger>
+            <Dialog.Portal>
+              <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
+              <Dialog.Content className="fixed inset-0 flex items-center justify-center">
+                <div className="bg-white p-8 rounded-lg">
+                  <Dialog.Title className="text-2xl font-bold mb-4">Mi'kmaq Dictionary</Dialog.Title>
+                  <Dictionary wordsByMonth={wordsByMonth} wordToImageMap={wordToImageMap} />
+                </div>
+              </Dialog.Content>
+            </Dialog.Portal>
+          </Dialog.Root>
+        </div>
       </div>
-    </div>
+    </div >
   );
 };
 
