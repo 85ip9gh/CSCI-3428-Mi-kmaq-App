@@ -120,7 +120,7 @@ const App: React.FC = () => {
   }, [winningWord]);
 
   return (
-    <div style={{ backgroundImage: 'url("/App_Background.jpg")' }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
+    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
       <div className='text-8xl font-bold mb-10'>Mi'kmaq Pictionary</div>
       <div className='flex gap-10'>
 
