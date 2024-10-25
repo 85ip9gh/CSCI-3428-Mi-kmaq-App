@@ -15,25 +15,25 @@ const wordsByMonth: Record<string, string[]> = {
 
 // Mapping words to image file paths
 const wordToImageMap: Record<string, string> = {
-  'and': '/and_aqq.png',
-  'Dad': '/Dad_ta\'ta.png',
-  'eat': '/eat_mijisi.png',
-  'Grandmother or Mother': '/Grandmother_kiju\'.png',
-  'him or her': '/him_or_her_nekm.png',
-  'I am coming from...': '/I_am_coming_from_wejiey.png',
-  'I am going': '/I_am_going_eliey.png',
-  'I am happy': '/I_am_happy_welta\'si.png',
-  'I have it': '/I_have_it_ala\'tu.png',
-  'I like...': '/I_like_kesatm.png',
-  'I like the taste of it': '/I_like_the_taste_of_it_wiktm.png',
-  'I love...': '/I_love_kesalk.png',
-  'I love you': '/I_love_you_kesalul.png',
-  'I': '/I_ni\'n.png',
-  'I see it': '/I_see_it_nemitu.png',
-  'Look at this': '/Look_at_this_ula.png',
-  'Make it': '/make_it_l\'tu.png',
-  'My name is...': '/my_name_is_teluisi.png',
-  'you': '/you_ki\'l.png',
+  'and': `${process.env.PUBLIC_URL}/and_aqq.png`,
+  'Dad': `${process.env.PUBLIC_URL}/Dad_ta'ta.png`,
+  'eat': `${process.env.PUBLIC_URL}/eat_mijisi.png`,
+  'Grandmother or Mother': `${process.env.PUBLIC_URL}/Grandmother_kiju'.png`,
+  'him or her': `${process.env.PUBLIC_URL}/him_or_her_nekm.png`,
+  'I am coming from...': `${process.env.PUBLIC_URL}/I_am_coming_from_wejiey.png`,
+  'I am going': `${process.env.PUBLIC_URL}/I_am_going_eliey.png`,
+  'I am happy': `${process.env.PUBLIC_URL}/I_am_happy_welta'si.png`,
+  'I have it': `${process.env.PUBLIC_URL}/I_have_it_ala'tu.png`,
+  'I like...': `${process.env.PUBLIC_URL}/I_like_kesatm.png`,
+  'I like the taste of it': `${process.env.PUBLIC_URL}/I_like_the_taste_of_it_wiktm.png`,
+  'I love...': `${process.env.PUBLIC_URL}/I_love_kesalk.png`,
+  'I love you': `${process.env.PUBLIC_URL}/I_love_you_kesalul.png`,
+  'I': `${process.env.PUBLIC_URL}/I_ni'n.png`,
+  'I see it': `${process.env.PUBLIC_URL}/I_see_it_nemitu.png`,
+  'Look at this': `${process.env.PUBLIC_URL}/Look_at_this_ula.png`,
+  'Make it': `${process.env.PUBLIC_URL}/make_it_l'tu.png`,
+  'My name is...': `${process.env.PUBLIC_URL}/my_name_is_teluisi.png`,
+  'you': `${process.env.PUBLIC_URL}/you_ki'l.png`,
 };
 
 const App: React.FC = () => {
@@ -134,7 +134,7 @@ const App: React.FC = () => {
       </div>
 
       <div className='flex items-center justify-start gap-10 min-w-96' >
-        <img src="/Audio_Button.png" alt="Drag Me" className="w-24 h-24" />
+        <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-24 h-24" />
         {/* Display the Winning Word */}
         <div>
           {winningWord && (
@@ -194,7 +194,7 @@ const App: React.FC = () => {
             onDragStart={() => setDragged(true)}  // Track drag start
             onDragEnd={() => setDragged(false)}   // Reset drag state after drop
           >
-            <img src="/bear_paw.PNG" alt="Drag Me" className="w-full h-full translate-y-4 cursor-pointer" />
+            <img src={`${process.env.PUBLIC_URL}/bear_paw.png`} alt="Drag Me" className="w-full h-full translate-y-4 cursor-pointer" />
           </div>
         </div>
 
@@ -224,13 +224,13 @@ const App: React.FC = () => {
 
         </div>
         <div className='flex flex-col justify-between items-center h-full ml-6'>
-          <img src="/heart.png" alt="Drag Me" className="w-36 h-36" />
+          <img src={`${process.env.PUBLIC_URL}/heart.png`} alt="Drag Me" className="w-36 h-36" />
 
           {/* Dictionary Button with Pop-up */}
           <Dialog.Root>
             <Dialog.Trigger asChild>
               <div className='flex flex-col justify-center items-center translate-y-8 cursor-pointer'>
-                <img src="/Dictionary.png" alt="Dictionary" className="w-36 h-36" />
+                <img src={`${process.env.PUBLIC_URL}/Dictionary.png`} alt="Dictionary" className="w-36 h-36" />
                 <button className="bg-transparent text-black px-2 py-2 rounded-lg ml-4 text-3xl font-bold">
                   Dictionary
                 </button>
