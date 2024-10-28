@@ -189,7 +189,7 @@ const App: React.FC = () => {
             onDragStart={() => setDragged(true)}  // Track drag start
             onDragEnd={() => setDragged(false)}   // Reset drag state after drop
           >
-            <img src="/bear_paw.PNG" alt="Drag Me" className="w-full h-full translate-y-4 cursor-pointer" />
+            <img src="/bear_paw.png" alt="Drag Me" className="w-full h-full translate-y-4 cursor-pointer" />
           </div>
         </div>
 
