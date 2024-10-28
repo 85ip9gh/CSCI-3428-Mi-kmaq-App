@@ -145,7 +145,7 @@ const App: React.FC = () => {
           {/* Dropdown Menu */}
           <DropdownMenu.Root>
             <DropdownMenu.Trigger
-              className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center justify-between w-48"
+              className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center justify-between w-56"
             >
               <div>{selectedMonth}</div>
               {/* Dropdown arrow */}
@@ -165,7 +165,7 @@ const App: React.FC = () => {
               </svg>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content
-              className="bg-white border border-gray-200 rounded-lg shadow-md w-44"
+              className="bg-white border border-gray-200 rounded-lg items-center shadow-md w-56"
             >
               {months.map((month) => (
                 <DropdownMenu.Item
