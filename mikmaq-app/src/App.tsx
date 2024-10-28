@@ -4,40 +4,40 @@ import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import Dictionary from './Dictionary';
 
 const wordsByMonth: Record<string, string[]> = {
-  September: ['I', 'you', 'My name is...'],
-  October: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it'],
-  November: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going'],
-  December: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going', 'I see it', 'I like...', 'I am coming from...'],
-  January: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going', 'I see it', 'I like...', 'I am coming from...', 'Dad', 'Grandmother or Mother', 'him or her'],
-  February: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going', 'I see it', 'I like...', 'I am coming from...', 'Dad', 'Grandmother or Mother', 'him or her', 'I have it', 'Look at this', 'I love you'],
-  March: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going', 'I see it', 'I like...', 'I am coming from...', 'Dad', 'Grandmother or Mother', 'him or her', 'I have it', 'Look at this', 'I love you', 'I am happy'],
+  'Wikumkewiku\'s': ['ni\'n', 'ki\'l', 'teluisi'],
+  'Wikewiku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm'],
+  'Keptekewiku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm', 'kesalk', 'l\'tu', 'eliey'],
+  'Kesikewiku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm','kesalk', 'l\'tu', 'eliey', 'nemitu', 'kesatm', 'wejiey'],
+  'Punamujuiku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm','kesalk', 'l\'tu', 'eliey', 'nemitu', 'kesatm', 'wejiey', 'ta\'ta', 'kiju\'', 'nekm'],
+  'Apuknajit': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm','kesalk', 'l\'tu', 'eliey', 'nemitu', 'kesatm', 'wejiey', 'ta\'ta', 'kiju\'', 'nekm', 'ala\'tu', 'ula', 'kesalul'],
+  'Si\'ko\'ku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm','kesalk', 'l\'tu', 'eliey', 'nemitu', 'kesatm', 'wejiey', 'ta\'ta', 'kiju\'', 'nekm', 'ala\'tu', 'ula', 'kesalul', 'welta\'si'],
 };
 
 // Mapping words to image file paths
 const wordToImageMap: Record<string, string> = {
-  'and': '/and_aqq.png',
-  'Dad': '/Dad_ta\'ta.png',
-  'eat': '/eat_mijisi.png',
-  'Grandmother or Mother': '/Grandmother_kiju\'.png',
-  'him or her': '/him_or_her_nekm.png',
-  'I am coming from...': '/I_am_coming_from_wejiey.png',
-  'I am going': '/I_am_going_eliey.png',
-  'I am happy': '/I_am_happy_welta\'si.png',
-  'I have it': '/I_have_it_ala\'tu.png',
-  'I like...': '/I_like_kesatm.png',
-  'I like the taste of it': '/I_like_the_taste_of_it_wiktm.png',
-  'I love...': '/I_love_kesalk.png',
-  'I love you': '/I_love_you_kesalul.png',
-  'I': '/I_ni\'n.png',
-  'I see it': '/I_see_it_nemitu.png',
-  'Look at this': '/Look_at_this_ula.png',
-  'Make it': '/make_it_l\'tu.png',
-  'My name is...': '/my_name_is_teluisi.png',
-  'you': '/you_ki\'l.png',
+  'aqq': '/and_aqq.png',
+  'ta\'ta': '/Dad_ta\'ta.png',
+  'mijisi': '/eat_mijisi.png',
+  'kiju\'': '/Grandmother_kiju\'.png',
+  'nekm': '/him_or_her_nekm.png',
+  'wejiey': '/I_am_coming_from_wejiey.png',
+  'eliey': '/I_am_going_eliey.png',
+  'welta\'si': '/I_am_happy_welta\'si.png',
+  'ala\'tu': '/I_have_it_ala\'tu.png',
+  'kesatm': '/I_like_kesatm.png',
+  'wiktm': '/I_like_the_taste_of_it_wiktm.png',
+  'kesalk': '/I_love_kesalk.png',
+  'kesalul': '/I_love_you_kesalul.png',
+  'ni\'n': '/I_ni\'n.png',
+  'nemitu': '/I_see_it_nemitu.png',
+  'ula': '/Look_at_this_ula.png',
+  'l\'tu': '/make_it_l\'tu.png',
+  'teluisi': '/my_name_is_teluisi.png',
+  'ki\'l': '/you_ki\'l.png',
 };
 
 const App: React.FC = () => {
-  const [selectedMonth, setSelectedMonth] = useState<string>('September'); // State for selected month
+  const [selectedMonth, setSelectedMonth] = useState<string>('Wikumkewiku\'s'); // State for selected month
   const [message, setMessage] = useState<string>('Drag the bear paw to the correct image!'); // State for message
   const [gridWords, setGridWords] = useState<string[]>([]); // State for grid words
   const [winningWord, setWinningWord] = useState<string>(''); // State for the winning word
@@ -51,7 +51,7 @@ const App: React.FC = () => {
   // Function to generate random grid words
   const generateRandomGridWords = () => {
     // Get the available words for the selected month (you used 'March' for testing)
-    const words = wordsByMonth['March'];
+    const words = wordsByMonth['Si\'ko\'ku\'s'];
 
     // Shuffle the words and select up to 9 unique words
     const shuffledWords = [...words].sort(() => Math.random() - 0.5);
@@ -145,7 +145,7 @@ const App: React.FC = () => {
           {/* Dropdown Menu */}
           <DropdownMenu.Root>
             <DropdownMenu.Trigger
-              className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center justify-between w-44"
+              className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center justify-between w-48"
             >
               <div>{selectedMonth}</div>
               {/* Dropdown arrow */}
