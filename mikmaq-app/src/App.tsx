@@ -1,8 +1,24 @@
+/**
+ * Mi'kmaq Pictionary App
+ * 
+ * Purpose: This app is a simple educational game that helps users learn Mi'kmaq words by matching them to
+ * images.
+ *
+ * Authors: Susan MacInnis, Zachary Ivanoff, Pesanth Janaseth Rangaswamy Anitha, Natalie Falldien, Ronen
+ * Franzman 
+ */
+
+
 import React, { useState, useEffect } from 'react';
+
+//Radix UI Dialog: https://www.radix-ui.com/primitives/docs/components/dialog
 import * as Dialog from '@radix-ui/react-dialog';
+
+//Radix UI Dropdown Menu: https://www.radix-ui.com/primitives/docs/components/dropdown-menu
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import Dictionary from './Dictionary';
 
+// Mi'kmaq words by month
 const wordsByMonth: Record<string, string[]> = {
   'Wikumkewiku\'s': ['ni\'n', 'ki\'l', 'teluisi'],
   'Wikewiku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm'],
@@ -36,6 +52,7 @@ const wordToImageMap: Record<string, string> = {
   'ki\'l': '/you_ki\'l.png',
 };
 
+// App Component
 const App: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>('Wikumkewiku\'s'); // State for selected month
   const [message, setMessage] = useState<string>('Drag the bear paw to the correct image!'); // State for message
@@ -48,8 +65,9 @@ const App: React.FC = () => {
   const [hoveredTile, setHoveredTile] = useState<number | null>(null);
   const [dragged, setDragged] = useState<boolean>(false);
 
-  // Function to generate random grid words
-  const generateRandomGridWords = () => {
+  // Purpose: Generates random grid words for the game
+  // Parameters: None
+  const GenerateRandomGridWords = () => {
     // Get the available words for the selected month (you used 'March' for testing)
     const words = wordsByMonth['Si\'ko\'ku\'s'];
 
@@ -62,13 +80,14 @@ const App: React.FC = () => {
       selectedWords[Math.floor(Math.random() * 9)] = winningWord; // Replace a random tile with the winning word
     }
 
+    console.log(selectedWords);
     // Set the grid with the selected words
     setGridWords(selectedWords); // No need to add empty tiles, always 9 words now
   };
 
-
-  // Function to select a random winning word
-  const selectWinningWord = () => {
+  // Purpose: Selects a random winning word from the available words for the selected month
+  // Parameters: None
+  const SelectWinningWord = () => {
     const words = wordsByMonth[selectedMonth].filter(word => !usedWords.includes(word));
     if (words.length > 0) {
       const randomIndex = Math.floor(Math.random() * words.length);
@@ -77,8 +96,10 @@ const App: React.FC = () => {
     }
   };
 
-  // Function to handle tile drop event
-  const handleTileDrop = (tileWord: string) => {
+  // Purpose: Handles the tile drop event and updates the game state
+  // Parameters:
+  // - tileWord: The word on the dropped tile
+  const HandleTileDrop = (tileWord: string) => {
     setDragged(false);
 
     // Check if the dropped tile corresponds to the winning word
@@ -88,8 +109,10 @@ const App: React.FC = () => {
       setMessage(`kjinu’kwalsi ap!`);
     }
 
+    // Add the used word to the list
     setUsedWords(prev => [...prev, winningWord]);
 
+    // Check if the game has ended
     if (usedWords.length == wordsByMonth[selectedMonth].length - 1) {
       setGameEnded(true);
       setMessage("Game ended. Select a new month to play again.");
@@ -100,8 +123,10 @@ const App: React.FC = () => {
     setRound(prev => prev + 1); // Increment the round
   };
 
-  // Function to handle month change
-  const handleMonthChange = (month: string) => {
+  // Purpose: Handles the month change event and resets the game state
+  // Parameters:
+  // - month: The month to be selected
+  const HandleMonthChange = (month: string) => {
     setSelectedMonth(month);
     setUsedWords([]); // Reset used words for the new month
     setRound(0); // Reset round count for the new month
@@ -110,12 +135,16 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    selectWinningWord(); // Set new winning word based on updated month
-    generateRandomGridWords(); // Generate new grid words based on updated month
+    SelectWinningWord(); // Set new winning word based on updated month
   }, [selectedMonth, usedWords]); // Run effect when selectedMonth or usedWords changes
 
+  useEffect(() => {
+    // After the winning word is selected, generate random grid words
+    GenerateRandomGridWords();
+  }, [winningWord]);
+
   return (
-    <div style={{ backgroundImage: 'url("/App_Background.jpg")' }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
+    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
       <div className='text-8xl font-bold mb-10'>Mi'kmaq Pictionary</div>
       <div className='flex gap-10'>
 
@@ -129,7 +158,7 @@ const App: React.FC = () => {
       </div>
 
       <div className='flex items-center justify-start gap-10 min-w-96' >
-        <img src="/Audio_Button.png" alt="Drag Me" className="w-24 h-24" />
+        <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-24 h-24" />
         {/* Display the Winning Word */}
         <div>
           {winningWord && (
@@ -171,7 +200,7 @@ const App: React.FC = () => {
                 <DropdownMenu.Item
                   key={month}
                   className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-xl"
-                  onClick={() => handleMonthChange(month)}
+                  onClick={() => HandleMonthChange(month)}
                 >
                   {month}
                 </DropdownMenu.Item>
@@ -189,7 +218,7 @@ const App: React.FC = () => {
             onDragStart={() => setDragged(true)}  // Track drag start
             onDragEnd={() => setDragged(false)}   // Reset drag state after drop
           >
-            <img src="/bear_paw.png" alt="Drag Me" className="w-full h-full translate-y-4 cursor-pointer" />
+            <img src={`${process.env.PUBLIC_URL}/bear_paw.png`} alt="Drag Me" className="w-full h-full translate-y-4 cursor-pointer" />
           </div>
         </div>
 
@@ -208,7 +237,7 @@ const App: React.FC = () => {
                 }}
                 onDragLeave={() => setHoveredTile(null)}
                 onDrop={() => {
-                  handleTileDrop(word);
+                  HandleTileDrop(word);
                   setHoveredTile(null);
                 }}
               >
@@ -219,13 +248,13 @@ const App: React.FC = () => {
 
         </div>
         <div className='flex flex-col justify-between items-center h-full ml-6'>
-          <img src="/heart.png" alt="Drag Me" className="w-36 h-36" />
+          <img src={`${process.env.PUBLIC_URL}/heart.png`} alt="Drag Me" className="w-36 h-36" />
 
           {/* Dictionary Button with Pop-up */}
           <Dialog.Root>
             <Dialog.Trigger asChild>
               <div className='flex flex-col justify-center items-center translate-y-8 cursor-pointer'>
-                <img src="/Dictionary.png" alt="Dictionary" className="w-36 h-36" />
+                <img src={`${process.env.PUBLIC_URL}/Dictionary.png`} alt="Dictionary" className="w-36 h-36" />
                 <button className="bg-transparent text-black px-2 py-2 rounded-lg ml-4 text-3xl font-bold">
                   Dictionary
                 </button>
