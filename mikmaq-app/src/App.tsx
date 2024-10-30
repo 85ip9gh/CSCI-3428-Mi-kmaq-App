@@ -1,8 +1,24 @@
+/**
+ * Mi'kmaq Pictionary App
+ * 
+ * Purpose: This app is a simple educational game that helps users learn Mi'kmaq words by matching them to
+ * images.
+ *
+ * Authors: Susan MacInnis, Zachary Ivanoff, Pesanth Janaseth Rangaswamy Anitha, Natalie Falldien, Ronen
+ * Franzman 
+ */
+
+
 import React, { useState, useEffect } from 'react';
+
+//Radix UI Dialog: https://www.radix-ui.com/primitives/docs/components/dialog
 import * as Dialog from '@radix-ui/react-dialog';
+
+//Radix UI Dropdown Menu: https://www.radix-ui.com/primitives/docs/components/dropdown-menu
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import Dictionary from './Dictionary';
 
+// Mi'kmaq words by month
 const wordsByMonth: Record<string, string[]> = {
   September: ['I', 'you', 'My name is...'],
   October: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it'],
@@ -36,6 +52,7 @@ const wordToImageMap: Record<string, string> = {
   'you': `${process.env.PUBLIC_URL}/you_ki'l.png`,
 };
 
+// App Component
 const App: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>('September'); // State for selected month
   const [message, setMessage] = useState<string>('Drag the bear paw to the correct image!'); // State for message
@@ -48,8 +65,9 @@ const App: React.FC = () => {
   const [hoveredTile, setHoveredTile] = useState<number | null>(null);
   const [dragged, setDragged] = useState<boolean>(false);
 
-  // Function to generate random grid words
-  const generateRandomGridWords = () => {
+  // Purpose: Generates random grid words for the game
+  // Parameters: None
+  const GenerateRandomGridWords = () => {
     // Get the available words for the selected month (you used 'March' for testing)
     const words = wordsByMonth['March'];
 
@@ -67,9 +85,9 @@ const App: React.FC = () => {
     setGridWords(selectedWords); // No need to add empty tiles, always 9 words now
   };
 
-
-  // Function to select a random winning word
-  const selectWinningWord = () => {
+  // Purpose: Selects a random winning word from the available words for the selected month
+  // Parameters: None
+  const SelectWinningWord = () => {
     const words = wordsByMonth[selectedMonth].filter(word => !usedWords.includes(word));
     if (words.length > 0) {
       const randomIndex = Math.floor(Math.random() * words.length);
@@ -78,8 +96,10 @@ const App: React.FC = () => {
     }
   };
 
-  // Function to handle tile drop event
-  const handleTileDrop = (tileWord: string) => {
+  // Purpose: Handles the tile drop event and updates the game state
+  // Parameters:
+  // - tileWord: The word on the dropped tile
+  const HandleTileDrop = (tileWord: string) => {
     setDragged(false);
 
     // Check if the dropped tile corresponds to the winning word
@@ -89,8 +109,10 @@ const App: React.FC = () => {
       setMessage(`kjinu’kwalsi ap!`);
     }
 
+    // Add the used word to the list
     setUsedWords(prev => [...prev, winningWord]);
 
+    // Check if the game has ended
     if (usedWords.length == wordsByMonth[selectedMonth].length - 1) {
       setGameEnded(true);
       setMessage("Game ended. Select a new month to play again.");
@@ -101,8 +123,10 @@ const App: React.FC = () => {
     setRound(prev => prev + 1); // Increment the round
   };
 
-  // Function to handle month change
-  const handleMonthChange = (month: string) => {
+  // Purpose: Handles the month change event and resets the game state
+  // Parameters:
+  // - month: The month to be selected
+  const HandleMonthChange = (month: string) => {
     setSelectedMonth(month);
     setUsedWords([]); // Reset used words for the new month
     setRound(0); // Reset round count for the new month
@@ -111,12 +135,12 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    selectWinningWord(); // Set new winning word based on updated month
+    SelectWinningWord(); // Set new winning word based on updated month
   }, [selectedMonth, usedWords]); // Run effect when selectedMonth or usedWords changes
 
   useEffect(() => {
     // After the winning word is selected, generate random grid words
-    generateRandomGridWords();
+    GenerateRandomGridWords();
   }, [winningWord]);
 
   return (
@@ -176,7 +200,7 @@ const App: React.FC = () => {
                 <DropdownMenu.Item
                   key={month}
                   className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-xl"
-                  onClick={() => handleMonthChange(month)}
+                  onClick={() => HandleMonthChange(month)}
                 >
                   {month}
                 </DropdownMenu.Item>
@@ -213,7 +237,7 @@ const App: React.FC = () => {
                 }}
                 onDragLeave={() => setHoveredTile(null)}
                 onDrop={() => {
-                  handleTileDrop(word);
+                  HandleTileDrop(word);
                   setHoveredTile(null);
                 }}
               >

@@ -11,14 +11,17 @@ const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap })
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
 
-  // Function to handle image click
-  const handleImageClick = (word: string) => {
+  // Purpose: Handles the image click event and sets the selected image and word
+  // Parameters:
+  // - word: The word corresponding to the clicked image
+  const HandleImageClick = (word: string) => {
     setSelectedImage(wordToImageMap[word]); // Set the selected image
     setSelectedWord(word); // Set the selected word
   };
 
-  // Function to close the image popup
-  const closeImagePopup = () => {
+  // Purpose: Closes the image popup and resets the selected image and word
+  // Parameters: None
+  const CloseImagePopup = () => {
     setSelectedImage(null);
     setSelectedWord(null);
   };
@@ -40,7 +43,7 @@ const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap })
               className={`flex flex-col items-center justify-center border-2 border-gray-300 h-28 w-28 bg-gray-100 text-l cursor-pointer 
         hover:bg-gray-400 hover:shadow-lg transition duration-300 
         ${selectedWord === word ? 'bg-gray-500 shadow-xl' : ''}`} // Add active styles
-              onClick={() => handleImageClick(word)} // Set image and word on click
+              onClick={() => HandleImageClick(word)} // Set image and word on click
             >
               <img src={wordToImageMap[word]} alt={word} className="h-24 w-24 m-2" />
             </div>
@@ -59,7 +62,7 @@ const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap })
             {/* Transparent button covering the entire dialog */}
             <button
               className="absolute inset-0 absolute" // Full coverage and transparency
-              onClick={closeImagePopup} // Close only the image popup
+              onClick={CloseImagePopup} // Close only the image popup
             >
               {/* Optional: Add text or content here, or keep it empty */}
             </button>
