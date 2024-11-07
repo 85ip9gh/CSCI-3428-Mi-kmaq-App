@@ -7,7 +7,7 @@ interface DictionaryProps {
 }
 
 const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap }) => {
-  const words = wordsByMonth['March'] || []; // Get words for the selected month
+  const words = wordsByMonth['Si\'ko\'ku\'s'] || []; // Get words for the selected month
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
 

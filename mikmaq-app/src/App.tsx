@@ -105,6 +105,7 @@ const App: React.FC = () => {
     // Check if the dropped tile corresponds to the winning word
     if (tileWord === winningWord) {
       setMessage(`kelu’lk tela’tekn!`);
+      addStar();
     } else {
       setMessage(`kjinu’kwalsi ap!`);
     }
@@ -132,6 +133,7 @@ const App: React.FC = () => {
     setRound(0); // Reset round count for the new month
     setGameEnded(false); // Reset game ended state
     setMessage('Drag the bear paw to the correct image!'); // Clear previous messages
+    resetStars();
   };
 
   useEffect(() => {
@@ -143,16 +145,16 @@ const App: React.FC = () => {
     GenerateRandomGridWords();
   }, [winningWord]);
 
-  function getImage(imageNum: number) {
-    switch (imageNum) {
-      case 9:
-        return "/logo192.png"
-        break;
-      default:
-        return "/heart.png";
-    }
-      
-  }
+  const [stars, setStars] = useState<string[]>([]);
+
+  const addStar = () => {
+    const newStar = `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`;
+    setStars([...stars, newStar]); //add star to array
+  };
+
+  const resetStars = () => {
+    setStars([]);  // Reset stars to empty array
+  };
 
   return (
     <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
@@ -233,8 +235,6 @@ const App: React.FC = () => {
           </div>
         </div>
 
-
-
         <div className={`${gameEnded ? ' pointer-events-none opacity-50' : ''}`}>
           {/* 3x3 Grid Layout */}
           <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-6 w-480">
@@ -260,6 +260,12 @@ const App: React.FC = () => {
         </div>
         <div className='flex flex-col justify-between items-center h-full ml-6'>
           <img src={`${process.env.PUBLIC_URL}/heart.png`} alt="Drag Me" className="w-36 h-36" />
+
+        <div className="image-container">
+          {stars.map((star, index) => (
+            <img className="w-24 h-24" key={index} src={star} alt={`Image ${index}`} />
+          ))}
+        </div>
 
           {/* Dictionary Button with Pop-up */}
           <Dialog.Root>
