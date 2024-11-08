@@ -69,7 +69,7 @@ const App: React.FC = () => {
   // Parameters: None
   const GenerateRandomGridWords = () => {
     // Get the available words for the selected month (you used 'March' for testing)
-    const words = wordsByMonth['Si\'ko\'ku\'s'];
+    const words = wordsByMonth[selectedMonth];
 
     // Shuffle the words and select up to 9 unique words
     const shuffledWords = [...words].sort(() => Math.random() - 0.5);
@@ -150,10 +150,18 @@ const App: React.FC = () => {
 
         {/* Display "Win" or "Lose" Message */}
         {message && (
-          <div className="mt-1 mb-1 p-4 bg-yellow-100 border-8 border-yellow-400 text-yellow-800 rounded-lg text-2xl font-bold">
+          <div
+            className={`mt-1 mb-1 p-4 border-8 rounded-lg text-2xl font-bold ${message === `kelu’lk tela’tekn!`
+              ? 'bg-green-100 border-green-400 text-green-800'
+              : message === `kjinu’kwalsi ap!`
+                ? 'bg-red-100 border-red-400 text-red-800'
+                : 'bg-yellow-100 border-yellow-400 text-yellow-800'
+              }`}
+          >
             {message}
           </div>
         )}
+
 
       </div>
 
@@ -194,7 +202,7 @@ const App: React.FC = () => {
               </svg>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content
-              className="bg-white border border-gray-200 rounded-lg items-center shadow-md w-56"
+              className="bg-white border border-gray-200 rounded-lg items-center shadow-md w-56 z-30"
             >
               {months.map((month) => (
                 <DropdownMenu.Item
@@ -226,7 +234,7 @@ const App: React.FC = () => {
 
         <div className={`${gameEnded ? ' pointer-events-none opacity-50' : ''}`}>
           {/* 3x3 Grid Layout */}
-          <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-6 w-480">
+          <div className={`grid grid-cols-3 ${gridWords.length == 3 ? 'grid-rows-1' : 'grid-rows3'} gap-4 mt-6 w-480`}>
             {gridWords.map((word, index) => (
               <div
                 key={index}

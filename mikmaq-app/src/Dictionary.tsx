@@ -7,7 +7,7 @@ interface DictionaryProps {
 }
 
 const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap }) => {
-  const words = wordsByMonth['March'] || []; // Get words for the selected month
+  const words = wordsByMonth['Si\'ko\'ku\'s'] || []; // Get words for the selected month
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
 
@@ -57,14 +57,13 @@ const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap })
           >
             <Dialog.Title className="text-3xl font-bold mb-6">{selectedWord}</Dialog.Title>
 
-            <img src={selectedImage} className="w-48 h-48 object-cover" />
+            <img src={selectedImage} className="w-64 h-64 object-contain" />
 
             {/* Transparent button covering the entire dialog */}
             <button
-              className="absolute inset-0 absolute" // Full coverage and transparency
+              className="absolute inset-0" // Full coverage and transparency
               onClick={CloseImagePopup} // Close only the image popup
             >
-              {/* Optional: Add text or content here, or keep it empty */}
             </button>
           </Dialog.Content>
 
