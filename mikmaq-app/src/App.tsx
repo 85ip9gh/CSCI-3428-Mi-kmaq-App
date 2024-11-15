@@ -52,6 +52,29 @@ const wordToImageMap: Record<string, string> = {
   'ki\'l': `${process.env.PUBLIC_URL}/you_ki\'l.png`,
 };
 
+// Mapping words to audio file paths
+const wordToAudioMap: Record<string, string> = {
+  'aqq': `${process.env.PUBLIC_URL}/aqq.wav`,
+  'ta\'ta': `${process.env.PUBLIC_URL}/tata.wav`,
+  'mijisi': `${process.env.PUBLIC_URL}/mijisi.wav`,
+  'kiju\'': `${process.env.PUBLIC_URL}/kiju.wav`,
+  'nekm': `${process.env.PUBLIC_URL}/nekm.wav`,
+  'wejiey': `${process.env.PUBLIC_URL}/wejiey.wav`,
+  'eliey': `${process.env.PUBLIC_URL}/eliey.wav`,
+  'welta\'si': `${process.env.PUBLIC_URL}/weltasi.wav`,
+  'ala\'tu': `${process.env.PUBLIC_URL}/alatu.wav`,
+  'kesatm': `${process.env.PUBLIC_URL}/kesatm.wav`,
+  'wiktm': `${process.env.PUBLIC_URL}/wiktm.wav`,
+  'kesalk': `${process.env.PUBLIC_URL}/kesalk.wav`,
+  'kesalul': `${process.env.PUBLIC_URL}/kesalul.wav`,
+  'ni\'n': `${process.env.PUBLIC_URL}/nin.wav`,
+  'nemitu': `${process.env.PUBLIC_URL}/nemitu.wav`,
+  'ula': `${process.env.PUBLIC_URL}/ula.wav`,
+  'l\'tu': `${process.env.PUBLIC_URL}/ltu.wav`,
+  'teluisi': `${process.env.PUBLIC_URL}/teluisi.wav`,
+  'ki\'l': `${process.env.PUBLIC_URL}/kil.wav`,
+};
+
 // App Component
 const App: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>('Wikumkewiku\'s'); // State for selected month
@@ -155,6 +178,17 @@ const App: React.FC = () => {
   const resetStars = () => {
     setStars([]);  // Reset stars to empty array
   };
+  
+  // Audio playback function
+  const playAudio = (word: string) => {
+    const audioPath = wordToAudioMap[word];
+    if (audioPath) {
+      const audio = new Audio(audioPath);
+      audio.play();
+    } else {
+      console.error(`No audio found for word: ${word}`);
+    }
+  };
 
   return (
     <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
@@ -179,7 +213,7 @@ const App: React.FC = () => {
       </div>
 
       <div className='flex items-center justify-start gap-10 min-w-96' >
-        <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-24 h-24" />
+        <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-24 h-24" onClick={() => playAudio(winningWord)}/>
         {/* Display the Winning Word */}
         <div>
           {winningWord && (
