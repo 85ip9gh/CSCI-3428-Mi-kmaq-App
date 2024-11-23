@@ -191,6 +191,7 @@ const App: React.FC = () => {
   };
 
   return (
+
     <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
       <div className='text-8xl font-bold mb-10'>Mi'kmaq Pictionary</div>
       <div className='flex gap-10'>
@@ -218,18 +219,27 @@ const App: React.FC = () => {
         <div>
           {winningWord && (
             <h2 className="text-5xl font-bold mb-1">{winningWord}</h2>
+
           )}
         </div>
-      </div>
 
-      <div className='flex justify-between items-end'>
+        <div className='flex items-center justify-center gap-4 lg:gap-10 min-w-96' >
+          <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-8 h-8 lg:w-20 lg:h-20" />
+          {/* Display the Winning Word */}
+          <div>
+            {winningWord && (
+              <h2 className="text-2xl lg:text-5xl font-bold mb-1">{winningWord}</h2>
+            )}
+          </div>
+        </div>
 
-
+      {/* Dektop View */}
+      <div className='flex justify-between items-end hidden sm:block'>
         <div className='flex flex-col justify-between items-center h-full mr-6'>
           {/* Dropdown Menu */}
           <DropdownMenu.Root>
             <DropdownMenu.Trigger
-              className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center justify-between w-56"
+              className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center w-56"
             >
               <div>{selectedMonth}</div>
               {/* Dropdown arrow */}
@@ -244,7 +254,7 @@ const App: React.FC = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
+                  d="M19 9l-7 8-7-7"
                 />
               </svg>
             </DropdownMenu.Trigger>
@@ -263,10 +273,7 @@ const App: React.FC = () => {
             </DropdownMenu.Content>
           </DropdownMenu.Root>
 
-
-
-
-          {/* Draggable PNG Image */}
+          {/* Draggable PNG Image*/}
           <div
             className="w-36 h-36"
             draggable
@@ -298,16 +305,16 @@ const App: React.FC = () => {
               </div>
             ))}
           </div>
-
         </div>
+
         <div className='flex flex-col justify-between items-center h-full ml-6'>
-          <img src={`${process.env.PUBLIC_URL}/heart.png`} alt="Drag Me" className="w-36 h-36" />
+          <img src={`${process.env.PUBLIC_URL}/heart.png`} alt="Heart" className="w-36 h-36" />
 
-        <div className="image-container">
-          {stars.map((star, index) => (
-            <img className="w-24 h-24" key={index} src={star} alt={`Image ${index}`} />
-          ))}
-        </div>
+          <div className="image-container">
+            {stars.map((star, index) => (
+              <img className="w-24 h-24" key={index} src={star} alt={`Image ${index}`} />
+            ))}
+          </div>
 
           {/* Dictionary Button with Pop-up */}
           <Dialog.Root>
@@ -331,7 +338,113 @@ const App: React.FC = () => {
           </Dialog.Root>
         </div>
       </div>
-    </div >
+
+      {/* Mobile View */}
+      <div className='flex flex-col justify-between block sm:hidden'>
+        <div className='flex flex-row justify-between items-center'>
+          {/* Dropdown Menu */}
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger
+              className="relative border-4 border-black bg-lime-500 text-black px-4 py-2 h-12 text-sm font-bold rounded-lg flex items-center w-40 ml-2"
+            >
+              <div>{selectedMonth}</div>
+              {/* Dropdown arrow */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                className="w-4 h-4 ml-2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M19 9l-7 8-7-7"
+                />
+              </svg>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content
+              className="bg-white border border-gray-200 rounded-lg items-center shadow-md w-34 z-30"
+            >
+              {months.map((month) => (
+                <DropdownMenu.Item
+                  key={month}
+                  className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-md"
+                  onClick={() => HandleMonthChange(month)}
+                >
+                  {month}
+                </DropdownMenu.Item>
+              ))}
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+
+          <img src={`${process.env.PUBLIC_URL}/heart.png`} alt="Heart" className="w-20 mr-4"/>
+        </div>
+
+        {/* <div className="image-container">
+          {stars.map((star, index) => (
+            <img className="w-24 h-24" key={index} src={star} alt={`Image ${index}`} />
+          ))}
+        </div> */}
+
+        <div className={`${gameEnded ? ' pointer-events-none opacity-50' : ''}`}>
+          {/* 3x3 Grid Layout */}
+          <div className={`grid grid-cols-3 ${gridWords.length == 3 ? 'grid-rows-1' : 'grid-rows3'} gap-1 mt-2  w-screen`}>
+            {gridWords.map((word, index) => (
+              <div
+                key={index}
+                className={`flex items-center border-8 border-black w-24 h-24 text-xl ${dragged && hoveredTile === index ? 'bg-gray-400' : 'bg-white'}`}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                  if (dragged) setHoveredTile(index);
+                }}
+                onDragLeave={() => setHoveredTile(null)}
+                onDrop={() => {
+                  HandleTileDrop(word);
+                  setHoveredTile(null);
+                }}
+              >
+                <img src={wordToImageMap[word]} alt={word} className="w-full h-full object-cover" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-row justify-between">
+          {/* Draggable PNG Image */}
+          <div
+            className="w-20 h-20 ml-4 mt-4"
+            draggable
+            onDragStart={() => setDragged(true)}  // Track drag start
+            onDragEnd={() => setDragged(false)}   // Reset drag state after drop
+          >
+            <img src={`${process.env.PUBLIC_URL}/bear_paw.png`} alt="Drag Me" className="w-full h-full translate-y-4 cursor-pointer" />
+          </div>
+
+          {/* Dictionary Button with Pop-up */}
+          <Dialog.Root>
+            <Dialog.Trigger asChild>
+              <div className='flex flex-col items-center translate-y-8 cursor-pointer'>
+                <img src={`${process.env.PUBLIC_URL}/Dictionary.png`} alt="Dictionary" className="w-20 h-20" />
+                <button className="bg-transparent text-black px-2 py-2 rounded-lg ml-4 text-3xl font-bold">
+                  Dictionary
+                </button>
+              </div>
+            </Dialog.Trigger>
+            <Dialog.Portal>
+              <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
+              <Dialog.Content className="fixed inset-0 flex items-center justify-center">
+                <div className="bg-white p-8 rounded-lg">
+                  <Dialog.Title className="text-2xl font-bold mb-4">Mi'kmaq Dictionary</Dialog.Title>
+                  <Dictionary wordsByMonth={wordsByMonth} wordToImageMap={wordToImageMap} />
+                </div>
+              </Dialog.Content>
+            </Dialog.Portal>
+          </Dialog.Root>
+        </div>
+      </div>
+    </div>
   );
 };
 
