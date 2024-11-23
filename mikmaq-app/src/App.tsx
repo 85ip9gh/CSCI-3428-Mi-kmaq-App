@@ -52,6 +52,29 @@ const wordToImageMap: Record<string, string> = {
   'ki\'l': `${process.env.PUBLIC_URL}/you_ki\'l.png`,
 };
 
+// Mapping words to audio file paths
+const wordToAudioMap: Record<string, string> = {
+  'aqq': `${process.env.PUBLIC_URL}/aqq.wav`,
+  'ta\'ta': `${process.env.PUBLIC_URL}/tata.wav`,
+  'mijisi': `${process.env.PUBLIC_URL}/mijisi.wav`,
+  'kiju\'': `${process.env.PUBLIC_URL}/kiju.wav`,
+  'nekm': `${process.env.PUBLIC_URL}/nekm.wav`,
+  'wejiey': `${process.env.PUBLIC_URL}/wejiey.wav`,
+  'eliey': `${process.env.PUBLIC_URL}/eliey.wav`,
+  'welta\'si': `${process.env.PUBLIC_URL}/weltasi.wav`,
+  'ala\'tu': `${process.env.PUBLIC_URL}/alatu.wav`,
+  'kesatm': `${process.env.PUBLIC_URL}/kesatm.wav`,
+  'wiktm': `${process.env.PUBLIC_URL}/wiktm.wav`,
+  'kesalk': `${process.env.PUBLIC_URL}/kesalk.wav`,
+  'kesalul': `${process.env.PUBLIC_URL}/kesalul.wav`,
+  'ni\'n': `${process.env.PUBLIC_URL}/nin.wav`,
+  'nemitu': `${process.env.PUBLIC_URL}/nemitu.wav`,
+  'ula': `${process.env.PUBLIC_URL}/ula.wav`,
+  'l\'tu': `${process.env.PUBLIC_URL}/ltu.wav`,
+  'teluisi': `${process.env.PUBLIC_URL}/teluisi.wav`,
+  'ki\'l': `${process.env.PUBLIC_URL}/kil.wav`,
+};
+
 // App Component
 const App: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>('Wikumkewiku\'s'); // State for selected month
@@ -155,24 +178,48 @@ const App: React.FC = () => {
   const resetStars = () => {
     setStars([]);  // Reset stars to empty array
   };
+  
+  // Audio playback function
+  const playAudio = (word: string) => {
+    const audioPath = wordToAudioMap[word];
+    if (audioPath) {
+      const audio = new Audio(audioPath);
+      audio.play();
+    } else {
+      console.error(`No audio found for word: ${word}`);
+    }
+  };
 
   return (
-    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-center bg-cover h-screen w-full flex flex-col items-center justify-center bg-gray-50">
-      <div className='text-4xl lg:text-8xl font-bold mb-2 lg:mb-10 text-center -mt-32 lg:mt-0'>Mi'kmaq Pictionary</div>
-        <div className='flex gap-10'>
 
-          {/* Display "Win" or "Lose" Message */}
-          {message && (
-            <div
-              className={`mt-1 mb-3 p-4 border-8 rounded-lg text-1xl lg:text-2xl font-bold ${message === `kelu’lk tela’tekn!`
-                ? 'bg-green-100 border-green-400 text-green-800'
-                : message === `kjinu’kwalsi ap!`
-                  ? 'bg-red-100 border-red-400 text-red-800'
-                  : 'bg-yellow-100 border-yellow-400 text-yellow-800'
-                }`}
-            >
-              {message}
-            </div>
+    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
+      <div className='text-8xl font-bold mb-10'>Mi'kmaq Pictionary</div>
+      <div className='flex gap-10'>
+
+        {/* Display "Win" or "Lose" Message */}
+        {message && (
+          <div
+            className={`mt-1 mb-1 p-4 border-8 rounded-lg text-2xl font-bold ${message === `kelu’lk tela’tekn!`
+              ? 'bg-green-100 border-green-400 text-green-800'
+              : message === `kjinu’kwalsi ap!`
+                ? 'bg-red-100 border-red-400 text-red-800'
+                : 'bg-yellow-100 border-yellow-400 text-yellow-800'
+              }`}
+          >
+            {message}
+          </div>
+        )}
+
+
+      </div>
+
+      <div className='flex items-center justify-start gap-10 min-w-96' >
+        <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-24 h-24" onClick={() => playAudio(winningWord)}/>
+        {/* Display the Winning Word */}
+        <div>
+          {winningWord && (
+            <h2 className="text-5xl font-bold mb-1">{winningWord}</h2>
+
           )}
         </div>
 
