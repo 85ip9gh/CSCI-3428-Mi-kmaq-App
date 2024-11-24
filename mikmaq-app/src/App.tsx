@@ -31,25 +31,49 @@ const wordsByMonth: Record<string, string[]> = {
 
 // Mapping words to image file paths
 const wordToImageMap: Record<string, string> = {
-  'aqq': '/and_aqq.png',
-  'ta\'ta': '/Dad_ta\'ta.png',
-  'mijisi': '/eat_mijisi.png',
-  'kiju\'': '/Grandmother_kiju\'.png',
-  'nekm': '/him_or_her_nekm.png',
-  'wejiey': '/I_am_coming_from_wejiey.png',
-  'eliey': '/I_am_going_eliey.png',
-  'welta\'si': '/I_am_happy_welta\'si.png',
-  'ala\'tu': '/I_have_it_ala\'tu.png',
-  'kesatm': '/I_like_kesatm.png',
-  'wiktm': '/I_like_the_taste_of_it_wiktm.png',
-  'kesalk': '/I_love_kesalk.png',
-  'kesalul': '/I_love_you_kesalul.png',
-  'ni\'n': '/I_ni\'n.png',
-  'nemitu': '/I_see_it_nemitu.png',
-  'ula': '/Look_at_this_ula.png',
-  'l\'tu': '/make_it_l\'tu.png',
-  'teluisi': '/my_name_is_teluisi.png',
-  'ki\'l': '/you_ki\'l.png',
+  'aqq': `${process.env.PUBLIC_URL}/and_aqq.png`,
+  'ta\'ta': `${process.env.PUBLIC_URL}/Dad_ta\'ta.png`,
+  'mijisi': `${process.env.PUBLIC_URL}/eat_mijisi.png`,
+  'kiju\'': `${process.env.PUBLIC_URL}/Grandmother_kiju\'.png`,
+  'nekm': `${process.env.PUBLIC_URL}/him_or_her_nekm.png`,
+  'wejiey': `${process.env.PUBLIC_URL}/I_am_coming_from_wejiey.png`,
+  'eliey': `${process.env.PUBLIC_URL}/I_am_going_eliey.png`,
+  'welta\'si': `${process.env.PUBLIC_URL}/I_am_happy_welta\'si.png`,
+  'ala\'tu': `${process.env.PUBLIC_URL}/I_have_it_ala\'tu.png`,
+  'kesatm': `${process.env.PUBLIC_URL}/I_like_kesatm.png`,
+  'wiktm': `${process.env.PUBLIC_URL}/I_like_the_taste_of_it_wiktm.png`,
+  'kesalk': `${process.env.PUBLIC_URL}/I_love_kesalk.png`,
+  'kesalul': `${process.env.PUBLIC_URL}/I_love_you_kesalul.png`,
+  'ni\'n': `${process.env.PUBLIC_URL}/I_ni\'n.png`,
+  'nemitu': `${process.env.PUBLIC_URL}/I_see_it_nemitu.png`,
+  'ula': `${process.env.PUBLIC_URL}/Look_at_this_ula.png`,
+  'l\'tu': `${process.env.PUBLIC_URL}/make_it_l\'tu.png`,
+  'teluisi': `${process.env.PUBLIC_URL}/my_name_is_teluisi.png`,
+  'ki\'l': `${process.env.PUBLIC_URL}/you_ki\'l.png`,
+};
+
+
+// Mapping words to audio file paths
+const wordToAudioMap: Record<string, string> = {
+  'aqq': `${process.env.PUBLIC_URL}/aqq.wav`,
+  'ta\'ta': `${process.env.PUBLIC_URL}/tata.wav`,
+  'mijisi': `${process.env.PUBLIC_URL}/mijisi.wav`,
+  'kiju\'': `${process.env.PUBLIC_URL}/kiju.wav`,
+  'nekm': `${process.env.PUBLIC_URL}/nekm.wav`,
+  'wejiey': `${process.env.PUBLIC_URL}/wejiey.wav`,
+  'eliey': `${process.env.PUBLIC_URL}/eliey.wav`,
+  'welta\'si': `${process.env.PUBLIC_URL}/weltasi.wav`,
+  'ala\'tu': `${process.env.PUBLIC_URL}/alatu.wav`,
+  'kesatm': `${process.env.PUBLIC_URL}/kesatm.wav`,
+  'wiktm': `${process.env.PUBLIC_URL}/wiktm.wav`,
+  'kesalk': `${process.env.PUBLIC_URL}/kesalk.wav`,
+  'kesalul': `${process.env.PUBLIC_URL}/kesalul.wav`,
+  'ni\'n': `${process.env.PUBLIC_URL}/nin.wav`,
+  'nemitu': `${process.env.PUBLIC_URL}/nemitu.wav`,
+  'ula': `${process.env.PUBLIC_URL}/ula.wav`,
+  'l\'tu': `${process.env.PUBLIC_URL}/ltu.wav`,
+  'teluisi': `${process.env.PUBLIC_URL}/teluisi.wav`,
+  'ki\'l': `${process.env.PUBLIC_URL}/kil.wav`,
 };
 
 // App Component
@@ -69,7 +93,7 @@ const App: React.FC = () => {
   // Parameters: None
   const GenerateRandomGridWords = () => {
     // Get the available words for the selected month (you used 'March' for testing)
-    const words = wordsByMonth['Si\'ko\'ku\'s'];
+    const words = wordsByMonth[selectedMonth];
 
     // Shuffle the words and select up to 9 unique words
     const shuffledWords = [...words].sort(() => Math.random() - 0.5);
@@ -119,6 +143,9 @@ const App: React.FC = () => {
       return;
     }
 
+
+    
+
     // Prepare for the next round
     setRound(prev => prev + 1); // Increment the round
   };
@@ -143,64 +170,65 @@ const App: React.FC = () => {
     GenerateRandomGridWords();
   }, [winningWord]);
 
+  const [stars, setStars] = useState<string[]>([]);
+
+  const addStar = () => {
+    const newStar = `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`;
+    setStars([...stars, newStar]); //add star to array
+  };
+
+  const resetStars = () => {
+    setStars([]);  // Reset stars to empty array
+  };
+  
+   // Audio playback function
+   const playAudio = (word: string) => {
+    const audioPath = wordToAudioMap[word];
+    if (audioPath) {
+      const audio = new Audio(audioPath);
+      audio.play();
+    } else {
+      console.error(`No audio found for word: ${word}`);
+    }
+  };
+
   return (
-    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
-      <div className='text-4xl lg:text-8xl font-bold mb-2 lg:mb-10 text-center -mt-32 lg:mt-0'>Mi'kmaq Pictionary</div>
-      <div className='flex gap-10'>
+    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-center bg-cover h-screen w-full flex flex-col items-center justify-center bg-gray-50">
+      <div className='text-4xl lg:text-8xl font-bold mb-2 lg:mb-10 text-center -mt-48 lg:mt-0'>Mi'kmaq Pictionary</div>
+        <div className='flex gap-10'>
 
-        {/* Display "Win" or "Lose" Message */}
-        {message && (
-<<<<<<< Updated upstream
-          <div className="mt-1 mb-1 p-4 bg-yellow-100 border-8 border-yellow-400 text-yellow-800 rounded-lg text-2xl font-bold">
-=======
-          <div
-            className={`mt-1 mb-3 p-4 border-8 rounded-lg text-1xl lg:text-2xl font-bold ${message === `kelu’lk tela’tekn!`
-              ? 'bg-green-100 border-green-400 text-green-800'
-              : message === `kjinu’kwalsi ap!`
-                ? 'bg-red-100 border-red-400 text-red-800'
-                : 'bg-yellow-100 border-yellow-400 text-yellow-800'
-              }`}
-          >
->>>>>>> Stashed changes
-            {message}
-          </div>
-        )}
-
-      </div>
-
-<<<<<<< Updated upstream
-      <div className='flex items-center justify-start gap-10 min-w-96' >
-        <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-24 h-24" />
-        {/* Display the Winning Word */}
-        <div>
-          {winningWord && (
-            <h2 className="text-5xl font-bold mb-1">{winningWord}</h2>
-=======
-      <div className='flex items-center justify-center gap-4 lg:gap-10 min-w-96' >
-        <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Audio" className="w-8 h-8 lg:w-20 lg:h-20" onClick={() => playAudio(winningWord)}/>
-        {/* Display the Winning Word */}
-        <div>
-          {winningWord && (
-            <h2 className="text-2xl lg:text-5xl font-bold mb-1">{winningWord}</h2>
-
->>>>>>> Stashed changes
+          {/* Display "Win" or "Lose" Message */}
+          {message && (
+            <div
+              className={`mt- mb-3 p-4 border-8 rounded-lg text-md lg:text-2xl font-bold ${message === `kelu’lk tela’tekn!`
+                ? 'bg-green-100 border-green-400 text-green-800'
+                : message === `kjinu’kwalsi ap!`
+                  ? 'bg-red-100 border-red-400 text-red-800'
+                  : 'bg-yellow-100 border-yellow-400 text-yellow-800'
+                }`}
+            >
+              {message}
+            </div>
           )}
         </div>
-      </div>
 
-      <div className='flex justify-between items-end'>
+        <div className='flex items-center justify-center gap-4 lg:gap-10 min-w-96' >
+          <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Audio Button" className="w-10 h-10 lg:w-24 lg:h-24" onClick={() => playAudio(winningWord)}/>
+          {/* Display the Winning Word */}
+          <div>
+            {winningWord && (
+              <h2 className="text-2xl lg:text-5xl font-bold mb-1">{winningWord}</h2>
+            )}
+          </div>
+        </div>
 
-<<<<<<< Updated upstream
-
-=======
       {/* Dektop View */}
-      <div className='flex justify-between items-end hidden sm:block'>
->>>>>>> Stashed changes
+      <div className='justify-between items-end hidden sm:flex'>
         <div className='flex flex-col justify-between items-center h-full mr-6'>
           {/* Dropdown Menu */}
           <DropdownMenu.Root>
             <DropdownMenu.Trigger
-              className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center justify-between w-56"
+              className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center w-56"
             >
               <div>{selectedMonth}</div>
               {/* Dropdown arrow */}
@@ -215,12 +243,12 @@ const App: React.FC = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
+                  d="M19 9l-7 8-7-7"
                 />
               </svg>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content
-              className="bg-white border border-gray-200 rounded-lg items-center shadow-md w-56"
+              className="bg-white border border-gray-200 rounded-lg items-center shadow-md w-56 z-30"
             >
               {months.map((month) => (
                 <DropdownMenu.Item
@@ -234,25 +262,20 @@ const App: React.FC = () => {
             </DropdownMenu.Content>
           </DropdownMenu.Root>
 
-
-
-
-          {/* Draggable PNG Image */}
+          {/* Draggable PNG Image*/}
           <div
             className="w-36 h-36"
             draggable
             onDragStart={() => setDragged(true)}  // Track drag start
             onDragEnd={() => setDragged(false)}   // Reset drag state after drop
           >
-            <img src={`${process.env.PUBLIC_URL}/bear_paw.png`} alt="Drag Me" className="w-full h-full translate-y-4 cursor-pointer" />
+            <img src={`${process.env.PUBLIC_URL}/bear_paw.png`} alt="Drag Me" className="w-full translate-y-4 cursor-pointer" />
           </div>
         </div>
 
-
-
         <div className={`${gameEnded ? ' pointer-events-none opacity-50' : ''}`}>
           {/* 3x3 Grid Layout */}
-          <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-6 w-480">
+          <div className={`grid grid-cols-3 ${gridWords.length == 3 ? 'grid-rows-1' : 'grid-rows3'} gap-4 mt-6 w-480`}>
             {gridWords.map((word, index) => (
               <div
                 key={index}
@@ -271,10 +294,16 @@ const App: React.FC = () => {
               </div>
             ))}
           </div>
-
         </div>
-        <div className='flex flex-col justify-between items-center h-full ml-6'>
-          <img src={`${process.env.PUBLIC_URL}/heart.png`} alt="Drag Me" className="w-36 h-36" />
+
+        <div className='flex flex-col justify-between items-center ml-6'>
+          <img src={`${process.env.PUBLIC_URL}/heart.png`} alt="Heart" className="w-36 h-36" />
+
+          {/* <div className="image-container">
+            {stars.map((star, index) => (
+              <img className="w-24 h-24" key={index} src={star} alt={`Image ${index}`} />
+            ))}
+          </div> */}
 
           {/* Dictionary Button with Pop-up */}
           <Dialog.Root>
@@ -298,12 +327,9 @@ const App: React.FC = () => {
           </Dialog.Root>
         </div>
       </div>
-<<<<<<< Updated upstream
-    </div >
-=======
 
       {/* Mobile View */}
-      <div className='flex flex-col justify-between block sm:hidden'>
+      <div className='flex-col justify-between flex sm:hidden'>
         <div className='flex flex-row justify-between items-center'>
           {/* Dropdown Menu */}
           <DropdownMenu.Root>
@@ -357,7 +383,7 @@ const App: React.FC = () => {
             {gridWords.map((word, index) => (
               <div
                 key={index}
-                className={`flex items-center border-8 border-black w-24 h-24 text-xl ${dragged && hoveredTile === index ? 'bg-gray-400' : 'bg-white'}`}
+                className={`flex items-center border-[6px] border-black w-24 h-24 text-xl ${dragged && hoveredTile === index ? 'bg-gray-400' : 'bg-white'}`}
                 onDragOver={(e) => {
                   e.preventDefault();
                   if (dragged) setHoveredTile(index);
@@ -368,7 +394,7 @@ const App: React.FC = () => {
                   setHoveredTile(null);
                 }}
               >
-                <img src={wordToImageMap[word]} alt={word} className="w-full h-full object-cover" />
+                <img src={wordToImageMap[word]} alt={word} className="w-full object-cover" />
               </div>
             ))}
           </div>
@@ -377,22 +403,20 @@ const App: React.FC = () => {
         <div className="flex flex-row justify-between">
           {/* Draggable PNG Image */}
           <div
-            className="w-20 h-20 ml-4 mt-4"
+            className=" fixed bottom-10 left-0 w-20 h-20 ml-4 mt-4"
             draggable
             onDragStart={() => setDragged(true)}  // Track drag start
             onDragEnd={() => setDragged(false)}   // Reset drag state after drop
           >
-            <img src={`${process.env.PUBLIC_URL}/bear_paw.png`} alt="Drag Me" className="w-full h-full translate-y-4 cursor-pointer" />
+            <img src={`${process.env.PUBLIC_URL}/bear_paw.png`} alt="Drag Me" className="w-full translate-y-4 cursor-pointer" />
           </div>
 
           {/* Dictionary Button with Pop-up */}
           <Dialog.Root>
             <Dialog.Trigger asChild>
-              <div className='flex flex-col items-center translate-y-8 cursor-pointer'>
+              <div className='fixed bottom-10 right-0 flex flex-col items-center translate-y-8 cursor-pointer mr-4'>
                 <img src={`${process.env.PUBLIC_URL}/Dictionary.png`} alt="Dictionary" className="w-20 h-20" />
-                <button className="bg-transparent text-black px-2 py-2 rounded-lg ml-4 text-3xl font-bold">
-                  Dictionary
-                </button>
+                <button className="bg-transparent text-black px-2 py-2 rounded-lg ml-4 text-3xl font-bold" />
               </div>
             </Dialog.Trigger>
             <Dialog.Portal>
@@ -408,9 +432,8 @@ const App: React.FC = () => {
         </div>
       </div>
     </div>
-  </div>
->>>>>>> Stashed changes
   );
 };
 
 export default App;
+
