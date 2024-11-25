@@ -17,10 +17,10 @@ import * as Dialog from '@radix-ui/react-dialog';
 //Radix UI Dropdown Menu: https://www.radix-ui.com/primitives/docs/components/dropdown-menu
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
-//React Draggable: https://www.npmjs.com/package/react-draggable
-import Draggable from 'react-draggable';
-
 import Dictionary from './Dictionary';
+
+import DraggableItem from './DraggableItem';
+import GridCell from './GridCell';
 
 // Mi'kmaq words by month
 const wordsByMonth: Record<string, string[]> = {
@@ -100,8 +100,6 @@ const App: React.FC = () => {
   const [usedWords, setUsedWords] = useState<string[]>([]); // State for used words
   const [round, setRound] = useState<number>(0); // Track current round
   const [gameEnded, setGameEnded] = useState<boolean>(false); // State for game ended
-  const [hoveredTile, setHoveredTile] = useState<number | null>(null);
-  const [dragged, setDragged] = useState<boolean>(false);
 
   // Purpose: Generates random grid words for the game
   // Parameters: None
@@ -111,17 +109,26 @@ const App: React.FC = () => {
 
     // Shuffle the words and select up to 9 unique words
     const shuffledWords = [...words].sort(() => Math.random() - 0.5);
-    const selectedWords = shuffledWords.slice(0, 9); // Select 9 unique words for the grid
+    const selectedWords = shuffledWords.slice(0, Math.min(words.length, 9)); // Select up to 9 unique words
 
     // Ensure the winning word is included in the grid
     if (winningWord && !selectedWords.includes(winningWord)) {
-      selectedWords[Math.floor(Math.random() * 9)] = winningWord; // Replace a random tile with the winning word
+      if (selectedWords.length < 9) {
+        selectedWords.push(winningWord); // Add the winning word if there's space
+      } else {
+        selectedWords[Math.floor(Math.random() * selectedWords.length)] = winningWord; // Replace a random word
+      }
     }
 
-    console.log(selectedWords);
-    // Set the grid with the selected words
-    setGridWords(selectedWords); // No need to add empty tiles, always 9 words now
+    // Pad the grid to ensure it has exactly 9 cells
+    const paddedGrid = [...selectedWords].concat(
+      Array(9 - selectedWords.length).fill("placeholder") // Fill remaining cells with placeholders
+    );
+
+    // Set the grid with the padded words
+    setGridWords(paddedGrid);
   };
+
 
   // Purpose: Selects a random winning word from the available words for the selected month
   // Parameters: None
@@ -134,38 +141,61 @@ const App: React.FC = () => {
     }
   };
 
+  const [stars, setStars] = useState<string[]>([]); // State for stars
+
   let currentAudio: HTMLAudioElement | null = null;
 
-  const [stars, setStars] = useState<string[]>([`${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`]); // State for stars
+  const starsRef = React.useRef<string[]>([]);
+  const roundRef = React.useRef<number>(0);
+
+  useEffect(() => {
+    starsRef.current = stars; // Sync the ref with the state
+  }, [stars]);
+
+  useEffect(() => {
+    roundRef.current = round; // Sync the ref with the state
+  }, [round]);
+
+
 
   const addStar = () => {
     const newStar = `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`;
-    setStars([...stars, newStar]); //add star to array
+
+    // Update the ref
+    starsRef.current = [...starsRef.current, newStar];
+
+    // Update the state to trigger re-render
+    setStars(starsRef.current);
   };
 
-  const playAudio = (audioPath: string) => {
+  useEffect(() => {
+    console.log("Stars Ref Updated:", starsRef.current);
+  }, [stars]);
 
+  useEffect(() => {
+    console.log("Round Ref Updated:", roundRef.current);
+  }, [round]);
+
+
+  const playAudio = (audioPath: string) => {
     if (audioPath) {
-      // If an audio is already playing, stop it
       if (currentAudio && !currentAudio.paused) {
         console.warn("Audio already playing. Please wait.");
         return;
       }
 
-      // Create a new audio instance
       currentAudio = new Audio(audioPath);
 
-      // Play the audio
-      currentAudio.play();
+      currentAudio.play().catch((error) => {
+        console.error(`Failed to play audio: ${audioPath}`, error);
+      });
 
-      // Reset currentAudio when playback ends
       currentAudio.addEventListener('ended', () => {
         currentAudio = null;
       });
 
-      // Handle errors
-      currentAudio.addEventListener('error', () => {
-        console.error(`Error playing audio for word: ${audioPath}`);
+      currentAudio.addEventListener('error', (e) => {
+        console.error(`Error playing audio for word: ${audioPath}`, e);
         currentAudio = null;
       });
     } else {
@@ -174,32 +204,39 @@ const App: React.FC = () => {
   };
 
 
+  useEffect(() => {
+    console.log("Updated gridWordsRef:", gridWordsRef.current);
+  }, [gridWords]);
+
+
+
+
+
   // Purpose: Handles the tile drop event and updates the game state
   // Parameters:
   // - tileWord: The word on the dropped tile
   const HandleTileDrop = (tileWord: string) => {
-    setDragged(false);
+
+    console.log("Handle Tile DROP TRIGGERED!" + " TILE WORD: " + tileWord);
 
     // Check if the dropped tile corresponds to the winning word
-    if (tileWord === winningWord) {
+    if (tileWord === winningWordRef.current) {
       setMessage(`kelu’lk tela’tekn!`);
       addStar();
     } else {
       setMessage(`kjinu’kwalsi ap!`);
     }
 
-    // Add the used word to the list
-    setUsedWords(prev => [...prev, winningWord]);
+    setUsedWords((prev) => {
+      const updatedUsedWords = [...prev, winningWordRef.current];
+      return updatedUsedWords;
+    });
 
-    // Check if the game has ended
-    if (usedWords.length == wordsByMonth[selectedMonth].length - 1) {
-      setGameEnded(true);
-      setMessage("Game ended. Select a new month to play again.");
-      return;
-    }
+    // Increment the round using the ref
+    roundRef.current += 1;
 
-    // Prepare for the next round
-    setRound(prev => prev + 1); // Increment the round
+    // Sync the state with the ref
+    setRound(roundRef.current);
   };
 
   // Purpose: Handles the month change event and resets the game state
@@ -218,14 +255,40 @@ const App: React.FC = () => {
     SelectWinningWord(); // Set new winning word based on updated month
   }, [selectedMonth, usedWords]); // Run effect when selectedMonth or usedWords changes
 
+  const winningWordRef = React.useRef<string>('');
   useEffect(() => {
-    // After the winning word is selected, generate random grid words
-    playAudio(wordToAudioMap[winningWord]);
-    GenerateRandomGridWords();
+    winningWordRef.current = winningWord;
+    console.log("WINNING WORD: " + winningWord);
   }, [winningWord]);
 
+  const gridWordsRef = React.useRef<string[]>([]);
+
+  useEffect(() => {
+    gridWordsRef.current = gridWords; // Update the ref when gridWords changes
+  }, [gridWords]);
+
+
+
+  useEffect(() => {
+    GenerateRandomGridWords();
+  }, [winningWord, round, selectedMonth]);
+
+
+  useEffect(() => {
+    playAudio(wordToAudioMap[winningWord]);
+  }, [gridWords]);
+
+  useEffect(() => {
+    console.log("Used Words: ", usedWords); // Log the previous state here
+    if (usedWords.length === wordsByMonth[selectedMonth].length) {
+      setGameEnded(true);
+      setMessage("Game ended. Select a new month to play again.");
+    }
+  }, [usedWords]);
+
+
   return (
-    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen max-h- bg-center flex flex-col items-center justify-between bg-gray-50 w-full overflow-hidden">
+    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen max-h- bg-center flex flex-col items-center justify-center bg-gray-50 w-full overflow-hidden">
       <div className='flex gap-10 justify-center'>
 
         {/* Display "Win" or "Lose" Message */}
@@ -303,66 +366,86 @@ const App: React.FC = () => {
       </div>
 
       <div className='flex flex-col justify-between items-center'>
-        <div className={`${gameEnded ? ' pointer-events-none opacity-50' : ''}`}>
-          {/* 3x3 Grid Layout */}
-          <div className="grid grid-cols-3 grid-rows-3 gap-2 mt-6 w-480">
-            {Array.from({ length: 9 }, (_, index) => {
-              // Use gridWords if index is within its length; otherwise, use placeholder
-              const word = gridWords[index] || "placeholder";
-              const imageSrc = word === "placeholder" ? `${process.env.PUBLIC_URL}/green.png` : wordToImageMap[word];
+        <div className="flex flex-col justify-between items-center">
+          <div className={`${gameEnded ? "pointer-events-none opacity-50" : ""}`}>
+            <div className="grid grid-cols-3 grid-rows-3 gap-2 mt-6 w-480">
+              {gridWords.map((word, index) => {
 
-              return (
-                <div
-                  key={index}
-                  className={`flex items-center justify-center border-8 border-black h-24 w-24 text-xl ${dragged && hoveredTile === index ? 'bg-gray-400' : 'bg-white'}`}
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    if (dragged) setHoveredTile(index);
-                  }}
-                  onDragLeave={() => setHoveredTile(null)}
-                  onDrop={() => {
-                    if (word !== "placeholder") HandleTileDrop(word); // Prevent drop action on placeholder tiles
-                    setHoveredTile(null);
-                  }}
-                >
-                  <img src={imageSrc} alt={word} className="w-full h-full object-cover" />
-                </div>
-              );
-            })}
+                const imageSrc =
+                  word === "placeholder"
+                    ? `${process.env.PUBLIC_URL}/green.png`  // Use a green placeholder image for missing words
+                    : wordToImageMap[word];  // Get image for valid word
+
+                return (
+                  <GridCell
+                    key={index}
+                    index={index}
+                    word={gridWords[index]} // Pass the word dynamically
+                    gridWordsRef={gridWordsRef} // Pass the ref
+                    imageSrc={imageSrc}
+                    HandleTileDrop={HandleTileDrop}
+                    gameEnded={gameEnded}
+                  />
+
+
+                );
+              })}
+            </div>
           </div>
-
         </div>
-
         <div className='flex items-center justify-between w-full mt-1'>
           <div
             className="w-24 h-24"
             draggable
-            onDragStart={() => setDragged(true)}  // Track drag start
-            onDragEnd={() => setDragged(false)}   // Reset drag state after drop
           >
-            <div className="group flex flex-col justify-center items-center cursor-pointer relative">
+            <DraggableItem id='paw' />
+            {/* <div className="group flex flex-col justify-center items-center cursor-pointer relative touch-none"
+            >
               <img
                 src={`${process.env.PUBLIC_URL}/bear_paw.png`}
                 alt="Drag Me"
-                className="w-full h-full cursor-pointer z-10"
+                className="w-full h-full cursor-pointer z-10 touch-none"
               />
               <div className="absolute w-10 h-10 bg-transparent rounded-full group-hover:bg-white group-hover:shadow-[0_0_20px_30px_rgba(255,255,255,1)] pointer-events-none"></div>
-            </div>
+            </div> */}
           </div>
           <div className='flex'>
-            <div className='grid grid-cols-5 gap-2'>
-              {stars.map((star, index) => (
-                <div className="group flex flex-col justify-center items-center relative">
-                  <img key={index} src={star} alt="Star" className="w-4 h-4 z-10" />
-                  <div className="absolute w-4 h-4 bg-transparent rounded-full bg-yellow-500 group-hover:shadow-[0_0_10px_10px_rgba(234, 179, 8,0.7)] pointer-events-none z-0"></div>
-                </div>
-              ))}
+            <div className="flex flex-wrap justify-center items-center gap-2 max-w-32 max-h-20">
+              {stars.map((star, index) => {
+                // Calculate size based on total stars
+                const size = Math.max(5, 50 - stars.length * 4); // Minimum size of 20px
 
+                return (
+                  <div
+                    className="group flex justify-center items-center relative"
+                    key={index}
+                    style={{
+                      width: `${size}px`,
+                      height: `${size}px`,
+                    }}
+                  >
+                    <img
+                      src={star}
+                      alt="Star"
+                      style={{
+                        width: `${size}px`,
+                        height: `${size}px`,
+                      }}
+                      className="z-10"
+                    />
+                    <div
+                      className="absolute rounded-full bg-yellow-500 pointer-events-none z-0"
+                      style={{
+                        width: `${size}px`,
+                        height: `${size}px`,
+                        boxShadow: `0 0 10px 10px rgba(234, 179, 8, 0.7)`,
+                      }}
+                    ></div>
+                  </div>
+                );
+              })}
             </div>
-            {/* <div className="group flex flex-col justify-center items-center cursor-pointer relative">
-              <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-16 h-16 cursor-pointer z-10" onClick={() => playAudio(wordToAudioMap[winningWord])} />
-              <div className="absolute w-8 h-8 bg-transparent rounded-full group-hover:bg-white group-hover:shadow-[0_0_20px_30px_rgba(255,255,255,1)] pointer-events-none z-0"></div>
-            </div> */}
+
 
           </div>
 

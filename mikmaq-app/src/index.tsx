@@ -3,13 +3,19 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { DndProvider } from 'react-dnd';
+import { TouchBackend } from 'react-dnd-touch-backend';
+import { MultiBackend } from 'react-dnd-multi-backend';
+import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
   <React.StrictMode>
-    <App />
+    <DndProvider backend={MultiBackend} options={HTML5toTouch}>
+      <App />
+    </DndProvider>
   </React.StrictMode>
 );
 
