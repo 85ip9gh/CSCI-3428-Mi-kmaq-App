@@ -4,10 +4,11 @@ import * as Dialog from '@radix-ui/react-dialog';
 interface DictionaryProps {
   wordsByMonth: Record<string, string[]>;
   wordToImageMap: Record<string, string>;
+  wordToAudioMap: Record<string, string>;
 }
 
-const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap }) => {
-  const words = wordsByMonth['March'] || []; // Get words for the selected month
+const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap, wordToAudioMap }) => {
+  const words = wordsByMonth['Si\'ko\'ku\'s'] || []; // Get words for the selected month
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
 
@@ -17,6 +18,7 @@ const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap })
   const HandleImageClick = (word: string) => {
     setSelectedImage(wordToImageMap[word]); // Set the selected image
     setSelectedWord(word); // Set the selected word
+    playAudio(word); // Play the audio for the selected word
   };
 
   // Purpose: Closes the image popup and resets the selected image and word
@@ -24,6 +26,40 @@ const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap })
   const CloseImagePopup = () => {
     setSelectedImage(null);
     setSelectedWord(null);
+  };
+
+
+  let currentAudio: HTMLAudioElement | null = null;
+
+  const playAudio = (word: string) => {
+    const audioPath = wordToAudioMap[word];
+
+    if (audioPath) {
+      // If an audio is already playing, stop it
+      if (currentAudio && !currentAudio.paused) {
+        console.warn("Audio already playing. Please wait.");
+        return;
+      }
+
+      // Create a new audio instance
+      currentAudio = new Audio(audioPath);
+
+      // Play the audio
+      currentAudio.play();
+
+      // Reset currentAudio when playback ends
+      currentAudio.addEventListener('ended', () => {
+        currentAudio = null;
+      });
+
+      // Handle errors
+      currentAudio.addEventListener('error', () => {
+        console.error(`Error playing audio for word: ${word}`);
+        currentAudio = null;
+      });
+    } else {
+      console.error(`No audio found for word: ${word}`);
+    }
   };
 
 

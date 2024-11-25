@@ -20,46 +20,80 @@ import Dictionary from './Dictionary';
 
 // Mi'kmaq words by month
 const wordsByMonth: Record<string, string[]> = {
-  September: ['I', 'you', 'My name is...'],
-  October: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it'],
-  November: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going'],
-  December: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going', 'I see it.', 'I like...', 'I am coming from...'],
-  January: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going', 'I see it.', 'I like...', 'I am coming from...', 'Dad', 'Grandmother or Mother', 'him or her'],
-  February: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going', 'I see it.', 'I like...', 'I am coming from...', 'Dad', 'Grandmother or Mother', 'him or her', 'I have it', 'Look at this', 'I love you'],
-  March: ['I', 'you', 'My name is...', 'and', 'eat', 'I like the taste of it', 'I love...', 'Make it', 'I am going', 'I see it', 'I like...', 'I am coming from...', 'Dad', 'Grandmother or Mother', 'him or her', 'I have it', 'Look at this', 'I love you', 'I am happy'],
+  'Wikumkewiku\'s': ['ni\'n', 'ki\'l', 'teluisi'],
+  'Wikewiku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm'],
+  'Keptekewiku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm', 'kesalk', 'l\'tu', 'eliey'],
+  'Kesikewiku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm', 'kesalk', 'l\'tu', 'eliey', 'nemitu', 'kesatm', 'wejiey'],
+  'Punamujuiku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm', 'kesalk', 'l\'tu', 'eliey', 'nemitu', 'kesatm', 'wejiey', 'ta\'ta', 'kiju\'', 'nekm'],
+  'Apuknajit': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm', 'kesalk', 'l\'tu', 'eliey', 'nemitu', 'kesatm', 'wejiey', 'ta\'ta', 'kiju\'', 'nekm', 'ala\'tu', 'ula', 'kesalul'],
+  'Si\'ko\'ku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm', 'kesalk', 'l\'tu', 'eliey', 'nemitu', 'kesatm', 'wejiey', 'ta\'ta', 'kiju\'', 'nekm', 'ala\'tu', 'ula', 'kesalul', 'welta\'si'],
 };
+
+const months = [
+  { name: "Wikumkewiku's", translation: "September" },
+  { name: "Wikewiku's", translation: "October" },
+  { name: "Keptekewiku's", translation: "November" },
+  { name: "Kesikewiku's", translation: "December" },
+  { name: "Punamujuiku's", translation: "January" },
+  { name: "Apuknajit", translation: "February" },
+  { name: "Si'ko'ku's", translation: "March" },
+];
 
 // Mapping words to image file paths
 const wordToImageMap: Record<string, string> = {
-  'and': `${process.env.PUBLIC_URL}/and_aqq.png`,
-  'Dad': `${process.env.PUBLIC_URL}/Dad_ta'ta.png`,
-  'eat': `${process.env.PUBLIC_URL}/eat_mijisi.png`,
-  'Grandmother or Mother': `${process.env.PUBLIC_URL}/Grandmother_kiju'.png`,
-  'him or her': `${process.env.PUBLIC_URL}/him_or_her_nekm.png`,
-  'I am coming from...': `${process.env.PUBLIC_URL}/I_am_coming_from_wejiey.png`,
-  'I am going': `${process.env.PUBLIC_URL}/I_am_going_eliey.png`,
-  'I am happy': `${process.env.PUBLIC_URL}/I_am_happy_welta'si.png`,
-  'I have it': `${process.env.PUBLIC_URL}/I_have_it_ala'tu.png`,
-  'I like...': `${process.env.PUBLIC_URL}/I_like_kesatm.png`,
-  'I like the taste of it': `${process.env.PUBLIC_URL}/I_like_the_taste_of_it_wiktm.png`,
-  'I love...': `${process.env.PUBLIC_URL}/I_love_kesalk.png`,
-  'I love you': `${process.env.PUBLIC_URL}/I_love_you_kesalul.png`,
-  'I': `${process.env.PUBLIC_URL}/I_ni'n.png`,
-  'I see it': `${process.env.PUBLIC_URL}/I_see_it_nemitu.png`,
-  'Look at this': `${process.env.PUBLIC_URL}/Look_at_this_ula.png`,
-  'Make it': `${process.env.PUBLIC_URL}/make_it_l'tu.png`,
-  'My name is...': `${process.env.PUBLIC_URL}/my_name_is_teluisi.png`,
-  'you': `${process.env.PUBLIC_URL}/you_ki'l.png`,
+  'aqq': `${process.env.PUBLIC_URL}/and_aqq.png`,
+  'ta\'ta': `${process.env.PUBLIC_URL}/Dad_ta\'ta.png`,
+  'mijisi': `${process.env.PUBLIC_URL}/eat_mijisi.png`,
+  'kiju\'': `${process.env.PUBLIC_URL}/Grandmother_kiju\'.png`,
+  'nekm': `${process.env.PUBLIC_URL}/him_or_her_nekm.png`,
+  'wejiey': `${process.env.PUBLIC_URL}/I_am_coming_from_wejiey.png`,
+  'eliey': `${process.env.PUBLIC_URL}/I_am_going_eliey.png`,
+  'welta\'si': `${process.env.PUBLIC_URL}/I_am_happy_welta\'si.png`,
+  'ala\'tu': `${process.env.PUBLIC_URL}/I_have_it_ala\'tu.png`,
+  'kesatm': `${process.env.PUBLIC_URL}/I_like_kesatm.png`,
+  'wiktm': `${process.env.PUBLIC_URL}/I_like_the_taste_of_it_wiktm.png`,
+  'kesalk': `${process.env.PUBLIC_URL}/I_love_kesalk.png`,
+  'kesalul': `${process.env.PUBLIC_URL}/I_love_you_kesalul.png`,
+  'ni\'n': `${process.env.PUBLIC_URL}/I_ni\'n.png`,
+  'nemitu': `${process.env.PUBLIC_URL}/I_see_it_nemitu.png`,
+  'ula': `${process.env.PUBLIC_URL}/Look_at_this_ula.png`,
+  'l\'tu': `${process.env.PUBLIC_URL}/make_it_l\'tu.png`,
+  'teluisi': `${process.env.PUBLIC_URL}/my_name_is_teluisi.png`,
+  'ki\'l': `${process.env.PUBLIC_URL}/you_ki\'l.png`,
 };
+
+// Mapping words to audio file paths
+const wordToAudioMap: Record<string, string> = {
+  'aqq': `${process.env.PUBLIC_URL}/aqq.wav`,
+  'ta\'ta': `${process.env.PUBLIC_URL}/tata.wav`,
+  'mijisi': `${process.env.PUBLIC_URL}/mijisi.wav`,
+  'kiju\'': `${process.env.PUBLIC_URL}/kiju.wav`,
+  'nekm': `${process.env.PUBLIC_URL}/nekm.wav`,
+  'wejiey': `${process.env.PUBLIC_URL}/wejiey.wav`,
+  'eliey': `${process.env.PUBLIC_URL}/eliey.wav`,
+  'welta\'si': `${process.env.PUBLIC_URL}/weltasi.wav`,
+  'ala\'tu': `${process.env.PUBLIC_URL}/alatu.wav`,
+  'kesatm': `${process.env.PUBLIC_URL}/kesatm.wav`,
+  'wiktm': `${process.env.PUBLIC_URL}/wiktm.wav`,
+  'kesalk': `${process.env.PUBLIC_URL}/kesalk.wav`,
+  'kesalul': `${process.env.PUBLIC_URL}/kesalul.wav`,
+  'ni\'n': `${process.env.PUBLIC_URL}/nin.wav`,
+  'nemitu': `${process.env.PUBLIC_URL}/nemitu.wav`,
+  'ula': `${process.env.PUBLIC_URL}/ula.wav`,
+  'l\'tu': `${process.env.PUBLIC_URL}/ltu.wav`,
+  'teluisi': `${process.env.PUBLIC_URL}/teluisi.wav`,
+  'ki\'l': `${process.env.PUBLIC_URL}/kil.wav`,
+};
+
+
 
 // App Component
 const App: React.FC = () => {
-  const [selectedMonth, setSelectedMonth] = useState<string>('September'); // State for selected month
+  const [selectedMonth, setSelectedMonth] = useState<string>('Wikumkewiku\'s'); // State for selected month
   const [message, setMessage] = useState<string>('Drag the bear paw to the correct image!'); // State for message
   const [gridWords, setGridWords] = useState<string[]>([]); // State for grid words
   const [winningWord, setWinningWord] = useState<string>(''); // State for the winning word
   const [usedWords, setUsedWords] = useState<string[]>([]); // State for used words
-  const months = Object.keys(wordsByMonth); // Extract month keys
   const [round, setRound] = useState<number>(0); // Track current round
   const [gameEnded, setGameEnded] = useState<boolean>(false); // State for game ended
   const [hoveredTile, setHoveredTile] = useState<number | null>(null);
@@ -68,8 +102,8 @@ const App: React.FC = () => {
   // Purpose: Generates random grid words for the game
   // Parameters: None
   const GenerateRandomGridWords = () => {
-    // Get the available words for the selected month (you used 'March' for testing)
-    const words = wordsByMonth['March'];
+    // Get the available words for the selected month
+    const words = wordsByMonth[selectedMonth];
 
     // Shuffle the words and select up to 9 unique words
     const shuffledWords = [...words].sort(() => Math.random() - 0.5);
@@ -95,6 +129,40 @@ const App: React.FC = () => {
       setWinningWord(selectedWord); // Set the winning word
     }
   };
+
+  let currentAudio: HTMLAudioElement | null = null;
+
+  const playAudio = (word: string) => {
+    const audioPath = wordToAudioMap[word];
+
+    if (audioPath) {
+      // If an audio is already playing, stop it
+      if (currentAudio && !currentAudio.paused) {
+        console.warn("Audio already playing. Please wait.");
+        return;
+      }
+
+      // Create a new audio instance
+      currentAudio = new Audio(audioPath);
+
+      // Play the audio
+      currentAudio.play();
+
+      // Reset currentAudio when playback ends
+      currentAudio.addEventListener('ended', () => {
+        currentAudio = null;
+      });
+
+      // Handle errors
+      currentAudio.addEventListener('error', () => {
+        console.error(`Error playing audio for word: ${word}`);
+        currentAudio = null;
+      });
+    } else {
+      console.error(`No audio found for word: ${word}`);
+    }
+  };
+
 
   // Purpose: Handles the tile drop event and updates the game state
   // Parameters:
@@ -141,11 +209,11 @@ const App: React.FC = () => {
   useEffect(() => {
     // After the winning word is selected, generate random grid words
     GenerateRandomGridWords();
+    playAudio(winningWord);
   }, [winningWord]);
 
   return (
     <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
-      <div className='text-8xl font-bold mb-10'>Mi'kmaq Pictionary</div>
       <div className='flex gap-10'>
 
         {/* Display "Win" or "Lose" Message */}
@@ -158,7 +226,7 @@ const App: React.FC = () => {
       </div>
 
       <div className='flex items-center justify-start gap-10 min-w-96' >
-        <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-24 h-24" />
+        <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-24 h-24 cursor-pointer" onClick={() => playAudio(winningWord)} />
         {/* Display the Winning Word */}
         <div>
           {winningWord && (
@@ -174,7 +242,7 @@ const App: React.FC = () => {
           {/* Dropdown Menu */}
           <DropdownMenu.Root>
             <DropdownMenu.Trigger
-              className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center justify-between w-44"
+              className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center justify-between w-56"
             >
               <div>{selectedMonth}</div>
               {/* Dropdown arrow */}
@@ -194,15 +262,15 @@ const App: React.FC = () => {
               </svg>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content
-              className="bg-white border border-gray-200 rounded-lg shadow-md w-44"
+              className="bg-white border border-gray-200 rounded-lg shadow-md w-72 z-30"
             >
-              {months.map((month) => (
+              {months.map(({ name, translation }) => (
                 <DropdownMenu.Item
-                  key={month}
+                  key={name}
                   className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-xl"
-                  onClick={() => HandleMonthChange(month)}
+                  onClick={() => HandleMonthChange(name)}
                 >
-                  {month}
+                  {name} ({translation})
                 </DropdownMenu.Item>
               ))}
             </DropdownMenu.Content>
@@ -265,7 +333,7 @@ const App: React.FC = () => {
               <Dialog.Content className="fixed inset-0 flex items-center justify-center">
                 <div className="bg-white p-8 rounded-lg">
                   <Dialog.Title className="text-2xl font-bold mb-4">Mi'kmaq Dictionary</Dialog.Title>
-                  <Dictionary wordsByMonth={wordsByMonth} wordToImageMap={wordToImageMap} />
+                  <Dictionary wordsByMonth={wordsByMonth} wordToImageMap={wordToImageMap} wordToAudioMap={wordToAudioMap} />
                 </div>
               </Dialog.Content>
             </Dialog.Portal>
