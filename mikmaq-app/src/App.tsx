@@ -16,6 +16,10 @@ import * as Dialog from '@radix-ui/react-dialog';
 
 //Radix UI Dropdown Menu: https://www.radix-ui.com/primitives/docs/components/dropdown-menu
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+
+//React Draggable: https://www.npmjs.com/package/react-draggable
+import Draggable from 'react-draggable';
+
 import Dictionary from './Dictionary';
 
 // Mi'kmaq words by month
@@ -26,7 +30,7 @@ const wordsByMonth: Record<string, string[]> = {
   'Kesikewiku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm', 'kesalk', 'l\'tu', 'eliey', 'nemitu', 'kesatm', 'wejiey'],
   'Punamujuiku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm', 'kesalk', 'l\'tu', 'eliey', 'nemitu', 'kesatm', 'wejiey', 'ta\'ta', 'kiju\'', 'nekm'],
   'Apuknajit': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm', 'kesalk', 'l\'tu', 'eliey', 'nemitu', 'kesatm', 'wejiey', 'ta\'ta', 'kiju\'', 'nekm', 'ala\'tu', 'ula', 'kesalul'],
-  'Si\'ko\'ku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm', 'kesalk', 'l\'tu', 'eliey', 'nemitu', 'kesatm', 'wejiey', 'ta\'ta', 'kiju\'', 'nekm', 'ala\'tu', 'ula', 'kesalul', 'welta\'si'],
+  'Si\'ko\'ku\'s': ['ni\'n', 'ki\'l', 'teluisi', 'aqq', 'mijisi', 'wiktm', 'kesalk', 'l\'tu', 'eliey', 'nemitu', 'kesatm', 'wejiey', 'ta\'ta', 'kiju\'', 'nekm', 'ala\'tu', 'ula', 'kesalul', 'welta\'si', 'wen'],
 };
 
 const months = [
@@ -60,6 +64,7 @@ const wordToImageMap: Record<string, string> = {
   'l\'tu': `${process.env.PUBLIC_URL}/make_it_l\'tu.png`,
   'teluisi': `${process.env.PUBLIC_URL}/my_name_is_teluisi.png`,
   'ki\'l': `${process.env.PUBLIC_URL}/you_ki\'l.png`,
+  'wen': `${process.env.PUBLIC_URL}/who_wen.png`,
 };
 
 // Mapping words to audio file paths
@@ -83,6 +88,7 @@ const wordToAudioMap: Record<string, string> = {
   'l\'tu': `${process.env.PUBLIC_URL}/ltu.wav`,
   'teluisi': `${process.env.PUBLIC_URL}/teluisi.wav`,
   'ki\'l': `${process.env.PUBLIC_URL}/kil.wav`,
+  'wen': `${process.env.PUBLIC_URL}/wen.wav`,
 };
 
 
@@ -90,7 +96,7 @@ const wordToAudioMap: Record<string, string> = {
 // App Component
 const App: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>('Wikumkewiku\'s'); // State for selected month
-  const [message, setMessage] = useState<string>('Drag the bear paw to the correct image!'); // State for message
+  const [message, setMessage] = useState<string>('Drag the Bear Paw to the Right Picture!'); // State for message
   const [gridWords, setGridWords] = useState<string[]>([]); // State for grid words
   const [winningWord, setWinningWord] = useState<string>(''); // State for the winning word
   const [usedWords, setUsedWords] = useState<string[]>([]); // State for used words
@@ -132,8 +138,7 @@ const App: React.FC = () => {
 
   let currentAudio: HTMLAudioElement | null = null;
 
-  const playAudio = (word: string) => {
-    const audioPath = wordToAudioMap[word];
+  const playAudio = (audioPath: string) => {
 
     if (audioPath) {
       // If an audio is already playing, stop it
@@ -155,11 +160,11 @@ const App: React.FC = () => {
 
       // Handle errors
       currentAudio.addEventListener('error', () => {
-        console.error(`Error playing audio for word: ${word}`);
+        console.error(`Error playing audio for word: ${audioPath}`);
         currentAudio = null;
       });
     } else {
-      console.error(`No audio found for word: ${word}`);
+      console.error(`No audio found for word: ${audioPath}`);
     }
   };
 
@@ -202,6 +207,31 @@ const App: React.FC = () => {
     setMessage('Drag the bear paw to the correct image!'); // Clear previous messages
   };
 
+  //   useEffect(() => {
+  //     // Initialize Dragula for the grid and draggable items
+  //     const drake = dragula([draggableItemsRef.current, gridRef.current], {
+  //       revertOnSpill: true, // Automatically revert the item if not dropped in a valid container
+  //       copy: false, // Do not copy the item when dragging, instead move it
+  //     });
+
+  //     // Prevent the item from staying in the container
+  //     drake.on('drop', (el, target, source, sibling) => {
+  //       // Check if the item was dropped inside the container (grid cell)
+  //       if (target && target === gridRef.current) {
+  //         // If dropped, move the item back to its original position
+  //         const originalPosition = draggableItemsRef.current; // You can store the original position of the item
+  //         el.style.position = 'absolute'; // Make sure the item stays outside the grid
+  //         originalPosition.appendChild(el); // Append back to the original position
+  //         el.style.transform = 'none'; // Reset any transformation on the item
+  //       }
+  //     });
+
+  //     // Clean up Dragula instance when the component is unmounted
+  //     return () => {
+  //       drake.destroy();
+  //     };
+  // })
+
   useEffect(() => {
     SelectWinningWord(); // Set new winning word based on updated month
   }, [selectedMonth, usedWords]); // Run effect when selectedMonth or usedWords changes
@@ -209,17 +239,17 @@ const App: React.FC = () => {
   useEffect(() => {
     // After the winning word is selected, generate random grid words
     GenerateRandomGridWords();
-    playAudio(winningWord);
+    playAudio(wordToAudioMap[winningWord]);
   }, [winningWord]);
 
   return (
-    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen flex flex-col items-center justify-center bg-gray-50">
-      <div className='flex gap-10'>
+    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen max-h- bg-center flex flex-col items-center justify-center bg-gray-50 w-full overflow-hidden">
+      <div className='flex gap-10 justify-center'>
 
         {/* Display "Win" or "Lose" Message */}
         {message && (
           <div
-            className={`mt-1 mb-1 p-4 border-8 rounded-lg text-2xl font-bold ${message === `kelu’lk tela’tekn!`
+            className={`mt-1 mb-1 p-1 border-4 rounded-lg text-xl text-center font-bold ${message === `kelu’lk tela’tekn!`
               ? 'bg-green-100 border-green-400 text-green-800'
               : message === `kjinu’kwalsi ap!`
                 ? 'bg-red-100 border-red-400 text-red-800'
@@ -232,8 +262,12 @@ const App: React.FC = () => {
 
       </div>
 
-      <div className='flex items-center justify-start gap-10 min-w-96' >
-        <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-24 h-24 cursor-pointer" onClick={() => playAudio(winningWord)} />
+      <div className='flex items-center justify-center gap-2 min-w-96' >
+        <div className="group flex flex-col justify-center items-center cursor-pointer relative">
+          <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-16 h-16 cursor-pointer z-10" onClick={() => playAudio(wordToAudioMap[winningWord])} />
+          <div className="absolute w-8 h-8 bg-transparent rounded-full group-hover:bg-white group-hover:shadow-[0_0_20px_30px_rgba(255,255,255,1)] pointer-events-none z-0"></div>
+        </div>
+
         {/* Display the Winning Word */}
         <div>
           {winningWord && (
@@ -242,66 +276,56 @@ const App: React.FC = () => {
         </div>
       </div>
 
-      <div className='flex justify-between items-end'>
+      <div className='flex items-center justify-between gap-2 w-480'>
 
-
-        <div className='flex flex-col justify-between items-center h-full mr-6'>
-          {/* Dropdown Menu */}
-          <DropdownMenu.Root>
-            <DropdownMenu.Trigger
-              className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center justify-between w-56"
-            >
-              <div>{selectedMonth}</div>
-              {/* Dropdown arrow */}
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="w-6 h-6 ml-2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content
-              className="bg-white border border-gray-200 rounded-lg shadow-md w-72 z-30"
-            >
-              {months.map(({ name, translation }) => (
-                <DropdownMenu.Item
-                  key={name}
-                  className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-xl"
-                  onClick={() => HandleMonthChange(name)}
-                >
-                  {name} ({translation})
-                </DropdownMenu.Item>
-              ))}
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
-
-
-
-
-          {/* Draggable PNG Image */}
-          <div
-            className="w-36 h-36"
-            draggable
-            onDragStart={() => setDragged(true)}  // Track drag start
-            onDragEnd={() => setDragged(false)}   // Reset drag state after drop
+        {/* Dropdown Menu */}
+        <DropdownMenu.Root>
+          <DropdownMenu.Trigger
+            className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center justify-between w-56 hover:shadow-[0_0_20px_16px_rgba(255,255,255,1)]"
           >
-            <img src={`${process.env.PUBLIC_URL}/bear_paw.png`} alt="Drag Me" className="w-full h-full translate-y-4 cursor-pointer" />
-          </div>
-        </div>
+            <div>{selectedMonth}</div>
+            {/* Dropdown arrow */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              className="w-6 h-6 ml-2"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </DropdownMenu.Trigger>
+          <DropdownMenu.Content
+            className="bg-white border border-gray-200 rounded-lg shadow-md w-72 z-30"
+          >
+            {months.map(({ name, translation }) => (
+              <DropdownMenu.Item
+                key={name}
+                className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-xl"
+                onClick={() => HandleMonthChange(name)}
+              >
+                {name} ({translation})
+              </DropdownMenu.Item>
+            ))}
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
 
+
+        <img src={`${process.env.PUBLIC_URL}/heart.png`} alt="Drag Me" className="w-24 h-24" />
+
+      </div>
+
+      <div className='flex flex-col justify-between items-end'>
 
 
         <div className={`${gameEnded ? ' pointer-events-none opacity-50' : ''}`}>
           {/* 3x3 Grid Layout */}
-          <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-6 w-480">
+          <div className="grid grid-cols-3 grid-rows-3 gap-2 mt-6 w-480">
             {Array.from({ length: 9 }, (_, index) => {
               // Use gridWords if index is within its length; otherwise, use placeholder
               const word = gridWords[index] || "placeholder";
@@ -310,7 +334,7 @@ const App: React.FC = () => {
               return (
                 <div
                   key={index}
-                  className={`flex items-center justify-center border-8 border-black h-36 w-36 text-xl ${dragged && hoveredTile === index ? 'bg-gray-400' : 'bg-white'}`}
+                  className={`flex items-center justify-center border-8 border-black h-24 w-24 text-xl ${dragged && hoveredTile === index ? 'bg-gray-400' : 'bg-white'}`}
                   onDragOver={(e) => {
                     e.preventDefault();
                     if (dragged) setHoveredTile(index);
@@ -327,31 +351,50 @@ const App: React.FC = () => {
             })}
           </div>
 
-
         </div>
-        <div className='flex flex-col justify-between items-center h-full ml-6'>
-          <img src={`${process.env.PUBLIC_URL}/heart.png`} alt="Drag Me" className="w-36 h-36" />
 
-          {/* Dictionary Button with Pop-up */}
-          <Dialog.Root>
-            <Dialog.Trigger asChild>
-              <div className='flex flex-col justify-center items-center translate-y-8 cursor-pointer'>
-                <img src={`${process.env.PUBLIC_URL}/Dictionary.png`} alt="Dictionary" className="w-36 h-36" />
-                {/* <button className="bg-transparent text-black py-2 rounded-lg ml-2 text-4xl font-bold">
-                  Dictionary
-                </button> */}
-              </div>
-            </Dialog.Trigger>
-            <Dialog.Portal>
-              <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
-              <Dialog.Content className="fixed inset-0 flex items-center justify-center">
-                <div className="bg-white p-8 rounded-lg">
-                  <Dialog.Title className="text-2xl font-bold mb-4">Mi'kmaq Dictionary</Dialog.Title>
-                  <Dictionary wordsByMonth={wordsByMonth} wordToImageMap={wordToImageMap} wordToAudioMap={wordToAudioMap} />
+        <div className='flex items-center justify-between gap-2 w-full mt-2'>
+          <div
+            className="w-24 h-24"
+            draggable
+            onDragStart={() => setDragged(true)}  // Track drag start
+            onDragEnd={() => setDragged(false)}   // Reset drag state after drop
+          >
+            <div className="group flex flex-col justify-center items-center cursor-pointer relative">
+              <img
+                src={`${process.env.PUBLIC_URL}/bear_paw.png`}
+                alt="Drag Me"
+                className="w-full h-full cursor-pointer z-10"
+              />
+              <div className="absolute w-10 h-10 bg-transparent rounded-full group-hover:bg-white group-hover:shadow-[0_0_20px_30px_rgba(255,255,255,1)] pointer-events-none"></div>
+            </div>
+          </div>
+
+          <div className='flex flex-col justify-between items-center h-full ml-6'>
+            {/* Dictionary Button with Pop-up */}
+            <Dialog.Root>
+              <Dialog.Trigger asChild>
+                <div className="group flex flex-col justify-center items-center cursor-pointer relative">
+                  <img
+                    src={`${process.env.PUBLIC_URL}/Dictionary.png`}
+                    alt="Dictionary"
+                    className="w-24 h-24 object-contain relative z-10"
+                    onClick={() => playAudio(`${process.env.PUBLIC_URL}/dictionary.mp3`)}
+                  />
+                  <div className="absolute w-10 h-10 bg-transparent rounded-full group-hover:bg-white group-hover:shadow-[0_0_20px_30px_rgba(255,255,255,1)] pointer-events-none"></div>
                 </div>
-              </Dialog.Content>
-            </Dialog.Portal>
-          </Dialog.Root>
+              </Dialog.Trigger>
+              <Dialog.Portal>
+                <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50" />
+                <Dialog.Content className="fixed inset-0 flex items-center justify-center">
+                  <div className="bg-white p-8 rounded-lg">
+                    <Dialog.Title className="text-2xl font-bold mb-4">Mi'kmaq Dictionary</Dialog.Title>
+                    <Dictionary wordsByMonth={wordsByMonth} wordToImageMap={wordToImageMap} wordToAudioMap={wordToAudioMap} />
+                  </div>
+                </Dialog.Content>
+              </Dialog.Portal>
+            </Dialog.Root>
+          </div>
         </div>
       </div>
     </div >

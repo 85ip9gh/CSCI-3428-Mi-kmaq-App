@@ -65,8 +65,8 @@ const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap, w
 
   return (
     <Dialog.Portal>
-      <Dialog.Overlay className="fixed inset-0 bg-black opacity-50" />
-      <Dialog.Content className="fixed bg-white p-6 rounded-lg shadow-lg top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 overflow-visible">
+      <Dialog.Overlay className="fixed inset-0 bg-black opacity-50 z-20" />
+      <Dialog.Content className="fixed bg-white p-4 rounded-lg shadow-lg top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 overflow-visible z-30 w-full sm:w-1/2 xl:w-1/3">
         <div className='flex flex-col items-center justify-center'>
           <Dialog.Title className="text-4xl font-bold mb-2">Dictionary</Dialog.Title>
         </div>
@@ -74,14 +74,16 @@ const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap, w
         {/* Display only the words for the selected month */}
         <div className="grid grid-cols-4 gap-4 mt-4">
           {words.map((word, index) => (
-            <div
-              key={index}
-              className={`flex flex-col items-center justify-center border-2 border-gray-300 h-28 w-28 bg-gray-100 text-l cursor-pointer 
+            <div className='flex justify-center items-center flex-col'>
+              <div
+                key={index}
+                className={`flex flex-col items-center justify-center border-2 border-gray-300 h-16 w-16 md:h-20 md:w-20 lg:h-24 lg:w-24 bg-gray-100 text-l cursor-pointer 
         hover:bg-gray-400 hover:shadow-lg transition duration-300 
         ${selectedWord === word ? 'bg-gray-500 shadow-xl' : ''}`} // Add active styles
-              onClick={() => HandleImageClick(word)} // Set image and word on click
-            >
-              <img src={wordToImageMap[word]} alt={word} className="h-24 w-24 m-2" />
+                onClick={() => HandleImageClick(word)} // Set image and word on click
+              >
+                <img src={wordToImageMap[word]} alt={word} className="h-full w-full m-2" />
+              </div>
             </div>
           ))}
         </div>
@@ -89,11 +91,11 @@ const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap, w
         {/* Pop-up for selected image */}
         {selectedImage && (
           <Dialog.Content
-            className="flex flex-col items-center justify-center fixed bg-white p-6 rounded-lg shadow-lg top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 bg-gray-100 border-2 border-gray-300"
+            className="flex flex-col items-center justify-center fixed bg-white p-6 rounded-lg shadow-lg top-1/3 left-1/3 transform -translate-x-1/3 -translate-y-1/3 z-30 bg-gray-100 border-2 border-gray-300 w-full h-full"
           >
-            <Dialog.Title className="text-3xl font-bold mb-6">{selectedWord}</Dialog.Title>
+            <Dialog.Title className="text-3xl md:text-5xl lg:text-6xl font-bold mb-6">{selectedWord}</Dialog.Title>
 
-            <img src={selectedImage} className="w-48 h-48 object-cover" />
+            <img src={selectedImage} className="w-48 h-48 md:w-64 md:h-64 lg:w-72 lg:h-72 object-cover" />
 
             {/* Transparent button covering the entire dialog */}
             <button
@@ -107,9 +109,11 @@ const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap, w
         )}
 
         <Dialog.Close asChild>
-          <button className="mt-4 bg-red-500 text-white px-4 py-2 rounded">
-            Close
-          </button>
+          <div className='flex flex-col items-center justify-center'>
+            <button className="mt-4 bg-red-500 text-white px-4 py-2 rounded">
+              Close
+            </button>
+          </div>
         </Dialog.Close>
       </Dialog.Content>
     </Dialog.Portal>
