@@ -219,14 +219,13 @@ const App: React.FC = () => {
   }, [selectedMonth, usedWords]); // Run effect when selectedMonth or usedWords changes
 
   useEffect(() => {
-
     // After the winning word is selected, generate random grid words
-    GenerateRandomGridWords();
     playAudio(wordToAudioMap[winningWord]);
+    GenerateRandomGridWords();
   }, [winningWord]);
 
   return (
-    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen max-h- bg-center flex flex-col items-between justify-between bg-gray-50 w-full overflow-hidden">
+    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen max-h- bg-center flex flex-col items-center justify-between bg-gray-50 w-full overflow-hidden">
       <div className='flex gap-10 justify-center'>
 
         {/* Display "Win" or "Lose" Message */}
@@ -353,9 +352,17 @@ const App: React.FC = () => {
           <div className='flex'>
             <div className='grid grid-cols-5 gap-2'>
               {stars.map((star, index) => (
-                <img key={index} src={star} alt="Star" className="w-4 h-4" />
+                <div className="group flex flex-col justify-center items-center relative">
+                  <img key={index} src={star} alt="Star" className="w-4 h-4 z-10" />
+                  <div className="absolute w-4 h-4 bg-transparent rounded-full bg-yellow-500 group-hover:shadow-[0_0_10px_10px_rgba(234, 179, 8,0.7)] pointer-events-none z-0"></div>
+                </div>
               ))}
+
             </div>
+            {/* <div className="group flex flex-col justify-center items-center cursor-pointer relative">
+              <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-16 h-16 cursor-pointer z-10" onClick={() => playAudio(wordToAudioMap[winningWord])} />
+              <div className="absolute w-8 h-8 bg-transparent rounded-full group-hover:bg-white group-hover:shadow-[0_0_20px_30px_rgba(255,255,255,1)] pointer-events-none z-0"></div>
+            </div> */}
 
           </div>
 
@@ -368,7 +375,6 @@ const App: React.FC = () => {
                     src={`${process.env.PUBLIC_URL}/Dictionary.png`}
                     alt="Dictionary"
                     className="w-24 h-24 object-contain relative z-10"
-                    onClick={() => playAudio(`${process.env.PUBLIC_URL}/dictionary.mp3`)}
                   />
                   <div className="absolute w-10 h-10 bg-transparent rounded-full group-hover:bg-white group-hover:shadow-[0_0_20px_30px_rgba(255,255,255,1)] pointer-events-none"></div>
                 </div>
