@@ -91,8 +91,6 @@ const wordToAudioMap: Record<string, string> = {
   'wen': `${process.env.PUBLIC_URL}/wen.wav`,
 };
 
-
-
 // App Component
 const App: React.FC = () => {
   const [selectedMonth, setSelectedMonth] = useState<string>('Wikumkewiku\'s'); // State for selected month
@@ -138,6 +136,13 @@ const App: React.FC = () => {
 
   let currentAudio: HTMLAudioElement | null = null;
 
+  const [stars, setStars] = useState<string[]>([`${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`, `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`]); // State for stars
+
+  const addStar = () => {
+    const newStar = `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`;
+    setStars([...stars, newStar]); //add star to array
+  };
+
   const playAudio = (audioPath: string) => {
 
     if (audioPath) {
@@ -178,6 +183,7 @@ const App: React.FC = () => {
     // Check if the dropped tile corresponds to the winning word
     if (tileWord === winningWord) {
       setMessage(`kelu’lk tela’tekn!`);
+      addStar();
     } else {
       setMessage(`kjinu’kwalsi ap!`);
     }
@@ -205,45 +211,22 @@ const App: React.FC = () => {
     setRound(0); // Reset round count for the new month
     setGameEnded(false); // Reset game ended state
     setMessage('Drag the bear paw to the correct image!'); // Clear previous messages
+    setStars([]);
   };
-
-  //   useEffect(() => {
-  //     // Initialize Dragula for the grid and draggable items
-  //     const drake = dragula([draggableItemsRef.current, gridRef.current], {
-  //       revertOnSpill: true, // Automatically revert the item if not dropped in a valid container
-  //       copy: false, // Do not copy the item when dragging, instead move it
-  //     });
-
-  //     // Prevent the item from staying in the container
-  //     drake.on('drop', (el, target, source, sibling) => {
-  //       // Check if the item was dropped inside the container (grid cell)
-  //       if (target && target === gridRef.current) {
-  //         // If dropped, move the item back to its original position
-  //         const originalPosition = draggableItemsRef.current; // You can store the original position of the item
-  //         el.style.position = 'absolute'; // Make sure the item stays outside the grid
-  //         originalPosition.appendChild(el); // Append back to the original position
-  //         el.style.transform = 'none'; // Reset any transformation on the item
-  //       }
-  //     });
-
-  //     // Clean up Dragula instance when the component is unmounted
-  //     return () => {
-  //       drake.destroy();
-  //     };
-  // })
 
   useEffect(() => {
     SelectWinningWord(); // Set new winning word based on updated month
   }, [selectedMonth, usedWords]); // Run effect when selectedMonth or usedWords changes
 
   useEffect(() => {
+
     // After the winning word is selected, generate random grid words
     GenerateRandomGridWords();
     playAudio(wordToAudioMap[winningWord]);
   }, [winningWord]);
 
   return (
-    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen max-h- bg-center flex flex-col items-center justify-center bg-gray-50 w-full overflow-hidden">
+    <div style={{ backgroundImage: `url(${process.env.PUBLIC_URL}/App_Background.jpg)` }} className="bg-no-repeat bg-cover h-screen max-h- bg-center flex flex-col items-between justify-between bg-gray-50 w-full overflow-hidden">
       <div className='flex gap-10 justify-center'>
 
         {/* Display "Win" or "Lose" Message */}
@@ -320,9 +303,7 @@ const App: React.FC = () => {
 
       </div>
 
-      <div className='flex flex-col justify-between items-end'>
-
-
+      <div className='flex flex-col justify-between items-center'>
         <div className={`${gameEnded ? ' pointer-events-none opacity-50' : ''}`}>
           {/* 3x3 Grid Layout */}
           <div className="grid grid-cols-3 grid-rows-3 gap-2 mt-6 w-480">
@@ -353,7 +334,7 @@ const App: React.FC = () => {
 
         </div>
 
-        <div className='flex items-center justify-between gap-2 w-full mt-2'>
+        <div className='flex items-center justify-between w-full mt-1'>
           <div
             className="w-24 h-24"
             draggable
@@ -368,6 +349,14 @@ const App: React.FC = () => {
               />
               <div className="absolute w-10 h-10 bg-transparent rounded-full group-hover:bg-white group-hover:shadow-[0_0_20px_30px_rgba(255,255,255,1)] pointer-events-none"></div>
             </div>
+          </div>
+          <div className='flex'>
+            <div className='grid grid-cols-5 gap-2'>
+              {stars.map((star, index) => (
+                <img key={index} src={star} alt="Star" className="w-4 h-4" />
+              ))}
+            </div>
+
           </div>
 
           <div className='flex flex-col justify-between items-center h-full ml-6'>
