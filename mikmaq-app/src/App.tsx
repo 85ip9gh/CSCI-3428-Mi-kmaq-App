@@ -218,7 +218,14 @@ const App: React.FC = () => {
 
         {/* Display "Win" or "Lose" Message */}
         {message && (
-          <div className="mt-1 mb-1 p-4 bg-yellow-100 border-8 border-yellow-400 text-yellow-800 rounded-lg text-2xl font-bold">
+          <div
+            className={`mt-1 mb-1 p-4 border-8 rounded-lg text-2xl font-bold ${message === `kelu’lk tela’tekn!`
+              ? 'bg-green-100 border-green-400 text-green-800'
+              : message === `kjinu’kwalsi ap!`
+                ? 'bg-red-100 border-red-400 text-red-800'
+                : 'bg-yellow-100 border-yellow-400 text-yellow-800'
+              }`}
+          >
             {message}
           </div>
         )}
