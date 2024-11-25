@@ -302,24 +302,31 @@ const App: React.FC = () => {
         <div className={`${gameEnded ? ' pointer-events-none opacity-50' : ''}`}>
           {/* 3x3 Grid Layout */}
           <div className="grid grid-cols-3 grid-rows-3 gap-4 mt-6 w-480">
-            {gridWords.map((word, index) => (
-              <div
-                key={index}
-                className={`flex items-center justify-center border-8 border-black h-36 w-36 text-xl ${dragged && hoveredTile === index ? 'bg-gray-400' : 'bg-white'}`}
-                onDragOver={(e) => {
-                  e.preventDefault();
-                  if (dragged) setHoveredTile(index);
-                }}
-                onDragLeave={() => setHoveredTile(null)}
-                onDrop={() => {
-                  HandleTileDrop(word);
-                  setHoveredTile(null);
-                }}
-              >
-                <img src={wordToImageMap[word]} alt={word} className="w-full h-full object-cover" />
-              </div>
-            ))}
+            {Array.from({ length: 9 }, (_, index) => {
+              // Use gridWords if index is within its length; otherwise, use placeholder
+              const word = gridWords[index] || "placeholder";
+              const imageSrc = word === "placeholder" ? `${process.env.PUBLIC_URL}/green.png` : wordToImageMap[word];
+
+              return (
+                <div
+                  key={index}
+                  className={`flex items-center justify-center border-8 border-black h-36 w-36 text-xl ${dragged && hoveredTile === index ? 'bg-gray-400' : 'bg-white'}`}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                    if (dragged) setHoveredTile(index);
+                  }}
+                  onDragLeave={() => setHoveredTile(null)}
+                  onDrop={() => {
+                    if (word !== "placeholder") HandleTileDrop(word); // Prevent drop action on placeholder tiles
+                    setHoveredTile(null);
+                  }}
+                >
+                  <img src={imageSrc} alt={word} className="w-full h-full object-cover" />
+                </div>
+              );
+            })}
           </div>
+
 
         </div>
         <div className='flex flex-col justify-between items-center h-full ml-6'>
@@ -330,9 +337,9 @@ const App: React.FC = () => {
             <Dialog.Trigger asChild>
               <div className='flex flex-col justify-center items-center translate-y-8 cursor-pointer'>
                 <img src={`${process.env.PUBLIC_URL}/Dictionary.png`} alt="Dictionary" className="w-36 h-36" />
-                <button className="bg-transparent text-black px-2 py-2 rounded-lg ml-4 text-3xl font-bold">
+                {/* <button className="bg-transparent text-black py-2 rounded-lg ml-2 text-4xl font-bold">
                   Dictionary
-                </button>
+                </button> */}
               </div>
             </Dialog.Trigger>
             <Dialog.Portal>
