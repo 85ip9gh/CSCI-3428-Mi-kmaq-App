@@ -18,7 +18,6 @@ import * as Dialog from '@radix-ui/react-dialog';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 
 import Dictionary from './Dictionary';
-
 import DraggableItem from './DraggableItem';
 import GridCell from './GridCell';
 
@@ -43,6 +42,8 @@ const months = [
   { name: "Si'ko'ku's", translation: "March" },
 ];
 
+// Natalie implemented the word to image mappings and created the images. She also handled a lot of the stylistic 
+// aspects of the App utilizing tailwind CSS.
 // Mapping words to image file paths
 const wordToImageMap: Record<string, string> = {
   'aqq': `${process.env.PUBLIC_URL}/and_aqq.png`,
@@ -89,6 +90,8 @@ const wordToAudioMap: Record<string, string> = {
   'teluisi': `${process.env.PUBLIC_URL}/teluisi.wav`,
   'ki\'l': `${process.env.PUBLIC_URL}/kil.wav`,
   'wen': `${process.env.PUBLIC_URL}/wen.wav`,
+  'kjinukwalsiap': `${process.env.PUBLIC_URL}/kjinukwalsiap.wav`,
+  'kelulk_telatekn': `${process.env.PUBLIC_URL}/kelulktelatekn.wav`,
 };
 
 // App Component
@@ -148,16 +151,22 @@ const App: React.FC = () => {
   const starsRef = React.useRef<string[]>([]);
   const roundRef = React.useRef<number>(0);
 
+  // Purpose: Sync the star state with the ref
+  // Parameters: None
   useEffect(() => {
-    starsRef.current = stars; // Sync the ref with the state
+    starsRef.current = stars;
   }, [stars]);
 
+
+  // Purpose: Sync the round state with the ref
+  // Parameters: None
   useEffect(() => {
-    roundRef.current = round; // Sync the ref with the state
+    roundRef.current = round;
   }, [round]);
 
 
-
+  // Purpose: Add a star to the star state
+  // Parameters: None
   const addStar = () => {
     const newStar = `${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`;
 
@@ -168,56 +177,61 @@ const App: React.FC = () => {
     setStars(starsRef.current);
   };
 
-  useEffect(() => {
-    console.log("Stars Ref Updated:", starsRef.current);
-  }, [stars]);
+  const audioQueueRef = React.useRef<string[]>([]); // Ref to track the current audio queue
 
-  useEffect(() => {
-    console.log("Round Ref Updated:", roundRef.current);
-  }, [round]);
+  // Purpose: Play the audio files in sequence
+  // Parameters: audioPaths - The array of audio file paths to play
+  const playAudio = (audioPaths: string[]) => {
+    if (!audioPaths || audioPaths.length === 0) {
+      console.error("No audio paths provided.");
+      return;
+    }
 
+    // Replace the queue for the current round
+    audioQueueRef.current = audioPaths;
 
-  const playAudio = (audioPath: string) => {
-    if (audioPath) {
-      if (currentAudio && !currentAudio.paused) {
-        console.warn("Audio already playing. Please wait.");
+    // Susan implemented the audio system and added audio for missing words when needed
+    // Purpose: Play the next audio in the queue
+    // Parameters: index - The index of the current audio in the queue
+    const playNextAudio = (index: number) => {
+      if (index >= audioQueueRef.current.length) {
+        currentAudio = null; // Reset after all audios are played
         return;
       }
 
+      // Skip playback if the audio queue has changed (new round)
+      if (audioPaths !== audioQueueRef.current) {
+        return;
+      }
+
+      const audioPath = audioPaths[index];
       currentAudio = new Audio(audioPath);
 
       currentAudio.play().catch((error) => {
         console.error(`Failed to play audio: ${audioPath}`, error);
-      });
-
-      currentAudio.addEventListener('ended', () => {
         currentAudio = null;
       });
 
-      currentAudio.addEventListener('error', (e) => {
-        console.error(`Error playing audio for word: ${audioPath}`, e);
+      currentAudio.addEventListener("ended", () => {
         currentAudio = null;
+        playNextAudio(index + 1); // Play the next audio in sequence
       });
-    } else {
-      console.error(`No audio found for word: ${audioPath}`);
-    }
+
+      currentAudio.addEventListener("error", (e) => {
+        console.error(`Error playing audio: ${audioPath}`, e);
+        currentAudio = null;
+        playNextAudio(index + 1); // Skip to the next audio on error
+      });
+    };
+
+    playNextAudio(0); // Start playing from the first audio
   };
-
-
-  useEffect(() => {
-    console.log("Updated gridWordsRef:", gridWordsRef.current);
-  }, [gridWords]);
-
-
-
 
 
   // Purpose: Handles the tile drop event and updates the game state
   // Parameters:
   // - tileWord: The word on the dropped tile
   const HandleTileDrop = (tileWord: string) => {
-
-    console.log("Handle Tile DROP TRIGGERED!" + " TILE WORD: " + tileWord);
 
     // Check if the dropped tile corresponds to the winning word
     if (tileWord === winningWordRef.current) {
@@ -251,35 +265,66 @@ const App: React.FC = () => {
     setStars([]);
   };
 
+  // Purpose: Update the winning word when the selected month changes
+  // Parameters: None
   useEffect(() => {
     SelectWinningWord(); // Set new winning word based on updated month
   }, [selectedMonth, usedWords]); // Run effect when selectedMonth or usedWords changes
 
+  // Ref for winning word
   const winningWordRef = React.useRef<string>('');
+
+  // Purpose: Sync the winning word with the ref
+  // Parameters: None
   useEffect(() => {
     winningWordRef.current = winningWord;
-    console.log("WINNING WORD: " + winningWord);
   }, [winningWord]);
 
+  // Ref for grid words
   const gridWordsRef = React.useRef<string[]>([]);
 
+  // Purpose: Sync the grid words with the ref
+  // Parameters: None
   useEffect(() => {
-    gridWordsRef.current = gridWords; // Update the ref when gridWords changes
+    gridWordsRef.current = gridWords;
   }, [gridWords]);
 
 
-
+  // Purpose: Generate random grid words when the winning word changes
+  // Parameters: None
   useEffect(() => {
     GenerateRandomGridWords();
   }, [winningWord, round, selectedMonth]);
 
-
   useEffect(() => {
-    playAudio(wordToAudioMap[winningWord]);
-  }, [gridWords]);
+    if (winningWord && message) {
+      // Determine the appropriate message audio path
+      const messageAudioPath =
+        message === `kelu’lk tela’tekn!`
+          ? wordToAudioMap["kelulk_telatekn"]
+          : message === `kjinu’kwalsi ap!`
+            ? wordToAudioMap["kjinukwalsiap"]
+            : null;
 
+      const winningWordAudioPath = wordToAudioMap[winningWord];
+
+      // Always play both the message and the winning word in sequence
+      const audioSequence = [];
+      if (messageAudioPath) audioSequence.push(messageAudioPath);
+      if (winningWordAudioPath) audioSequence.push(winningWordAudioPath);
+
+      if (audioSequence.length > 0) {
+        playAudio(audioSequence); // Play the audio sequence
+      }
+    }
+  }, [winningWord, message, round]);
+
+
+
+
+  // Purpose: Check if the game has ended when used words change
+  // Parameters: None
   useEffect(() => {
-    console.log("Used Words: ", usedWords); // Log the previous state here
     if (usedWords.length === wordsByMonth[selectedMonth].length) {
       setGameEnded(true);
       setMessage("Game ended. Select a new month to play again.");
@@ -307,9 +352,12 @@ const App: React.FC = () => {
 
       </div>
 
+      {/* Display the Winning Word and Audio Button */}
       <div className='flex items-center justify-center gap-2 min-w-96' >
         <div className="group flex flex-col justify-center items-center cursor-pointer relative">
-          <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="Drag Me" className="w-16 h-16 cursor-pointer z-10" onClick={() => playAudio(wordToAudioMap[winningWord])} />
+
+          {/* Audio Button */}
+          <img src={`${process.env.PUBLIC_URL}/Audio_Button.png`} alt="audio" className="w-16 h-16 cursor-pointer z-10" onClick={() => playAudio([wordToAudioMap[winningWord]])} />
           <div className="absolute w-8 h-8 bg-transparent rounded-full group-hover:bg-white group-hover:shadow-[0_0_20px_30px_rgba(255,255,255,1)] pointer-events-none z-0"></div>
         </div>
 
@@ -324,6 +372,7 @@ const App: React.FC = () => {
       <div className='flex items-center justify-between gap-2 w-480'>
 
         {/* Dropdown Menu */}
+        {/* Susan implemented the months dropdown */}
         <DropdownMenu.Root>
           <DropdownMenu.Trigger
             className="relative border-8 border-black bg-lime-500 text-black px-4 py-2 h-16 text-xl font-bold rounded-lg flex items-center justify-between w-56 hover:shadow-[0_0_20px_16px_rgba(255,255,255,1)]"
@@ -361,10 +410,12 @@ const App: React.FC = () => {
         </DropdownMenu.Root>
 
 
-        <img src={`${process.env.PUBLIC_URL}/heart.png`} alt="Drag Me" className="w-24 h-24" />
+        <img src={`${process.env.PUBLIC_URL}/heart.png`} alt="heart" className="w-24 h-24" />
 
       </div>
 
+      {/* Display the Grid */}
+      {/* Zachary implemented the grid and handled a majority of the game logic*/}
       <div className='flex flex-col justify-between items-center'>
         <div className="flex flex-col justify-between items-center">
           <div className={`${gameEnded ? "pointer-events-none opacity-50" : ""}`}>
@@ -393,62 +444,99 @@ const App: React.FC = () => {
             </div>
           </div>
         </div>
+
+
         <div className='flex items-center justify-between w-full mt-1'>
+          {/* Ronen implemented the dragging paw functionality and the mobile view for the app*/}
           <div
             className="w-24 h-24"
             draggable
           >
             <DraggableItem id='paw' />
-            {/* <div className="group flex flex-col justify-center items-center cursor-pointer relative touch-none"
-            >
-              <img
-                src={`${process.env.PUBLIC_URL}/bear_paw.png`}
-                alt="Drag Me"
-                className="w-full h-full cursor-pointer z-10 touch-none"
-              />
-              <div className="absolute w-10 h-10 bg-transparent rounded-full group-hover:bg-white group-hover:shadow-[0_0_20px_30px_rgba(255,255,255,1)] pointer-events-none"></div>
-            </div> */}
           </div>
-          <div className='flex'>
-            <div className="flex flex-wrap justify-center items-center gap-2 max-w-32 max-h-20">
-              {stars.map((star, index) => {
-                // Calculate size based on total stars
-                const size = Math.max(5, 50 - stars.length * 4); // Minimum size of 20px
 
-                return (
-                  <div
-                    className="group flex justify-center items-center relative"
-                    key={index}
-                    style={{
-                      width: `${size}px`,
-                      height: `${size}px`,
-                    }}
-                  >
-                    <img
-                      src={star}
-                      alt="Star"
-                      style={{
-                        width: `${size}px`,
-                        height: `${size}px`,
-                      }}
-                      className="z-10"
-                    />
+          {/* Zachary implemented the Mi'kmaq stars logic */}
+          <div className="flex">
+            <div className="flex flex-wrap justify-center items-center gap-2 max-w-32 max-h-20">
+              {stars.map((_, index) => {
+                // Calculate the number of golden stars and remaining red stars
+                const goldenStarCount = Math.floor(stars.length / 5);
+                const redStarCount = stars.length % 5;
+
+                // Render golden stars first
+                if (index < goldenStarCount) {
+                  const size = Math.max(20, 50 - stars.length * 4) + 10; // Golden stars are slightly larger
+                  return (
                     <div
-                      className="absolute rounded-full bg-yellow-500 pointer-events-none z-0"
+                      className="group flex justify-center items-center relative"
+                      key={`golden-${index}`}
                       style={{
                         width: `${size}px`,
                         height: `${size}px`,
-                        boxShadow: `0 0 10px 10px rgba(234, 179, 8, 0.7)`,
                       }}
-                    ></div>
-                  </div>
-                );
+                    >
+                      <img
+                        src={`${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`}
+                        alt="Golden Star"
+                        style={{
+                          width: `${size}px`,
+                          height: `${size}px`,
+                        }}
+                        className="z-10"
+                      />
+                      <div
+                        className="absolute rounded-full bg-yellow-400 pointer-events-none z-0"
+                        style={{
+                          width: `${size}px`,
+                          height: `${size}px`,
+                          boxShadow: `0 0 20px 15px rgba(255, 215, 0, 1)`, // Brighter glow for golden stars
+                        }}
+                      ></div>
+                    </div>
+                  );
+                }
+
+                // Render red stars for the remaining ones
+                if (index - goldenStarCount < redStarCount) {
+                  const size = Math.max(5, 50 - stars.length * 4); // Default size for red stars
+                  return (
+                    <div
+                      className="group flex justify-center items-center relative"
+                      key={`red-${index}`}
+                      style={{
+                        width: `${size}px`,
+                        height: `${size}px`,
+                      }}
+                    >
+                      <img
+                        src={`${process.env.PUBLIC_URL}/Mi'kmaq_Star.png`}
+                        alt="Red Star"
+                        style={{
+                          width: `${size}px`,
+                          height: `${size}px`,
+                        }}
+                        className="z-10"
+                      />
+                      <div
+                        className="absolute rounded-full bg-red-400 pointer-events-none z-0"
+                        style={{
+                          width: `${size}px`,
+                          height: `${size}px`,
+                          boxShadow: `0 0 20px 15px rgba(248,113,113,255)`, // Default glow for red stars
+                        }}
+                      ></div>
+                    </div>
+                  );
+                }
+
+                return null; // No more stars to render
               })}
             </div>
-
-
           </div>
 
+
+
+          {/* Pesanth implemented the dictionary functionality and adjusted formatting of components */}
           <div className='flex flex-col justify-between items-center h-full ml-6'>
             {/* Dictionary Button with Pop-up */}
             <Dialog.Root>

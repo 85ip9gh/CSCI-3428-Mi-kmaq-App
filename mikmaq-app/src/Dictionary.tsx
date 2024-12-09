@@ -1,4 +1,14 @@
+/**
+ * Dictionary.tsx
+ * 
+ * Purpose: This file contains the Dictionary component that displays the words for the selected month and allows users to click on the words to view the corresponding images. The component also plays the audio for the selected word when the image is clicked.
+ * 
+ * Author: Pesanth Janaseth Rangaswamy Anitha
+ */
+
 import React, { useState } from 'react';
+
+//Radix UI Dialog: https://www.radix-ui.com/primitives/docs/components/dialog
 import * as Dialog from '@radix-ui/react-dialog';
 
 interface DictionaryProps {
@@ -31,6 +41,8 @@ const Dictionary: React.FC<DictionaryProps> = ({ wordsByMonth, wordToImageMap, w
 
   let currentAudio: HTMLAudioElement | null = null;
 
+  // Purpose: Plays the audio for the selected word
+  // Parameters: word - The word for which the audio should be played
   const playAudio = (word: string) => {
     const audioPath = wordToAudioMap[word];
 

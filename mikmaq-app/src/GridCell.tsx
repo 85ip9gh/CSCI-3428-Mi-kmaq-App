@@ -1,3 +1,12 @@
+/**
+ * GridCell.tsx
+ * 
+ * Purpose: This file contains the GridCell component that displays the grid cell for the drag and drop feature.
+ * 
+ * Author: Zachary Ivanoff
+ *  
+ */
+
 import React from "react";
 import { useDrop } from "react-dnd";
 
